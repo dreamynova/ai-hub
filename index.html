@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>◆ AI Hub — Knowledge Manager</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #08080F;
+    --bg2: #0D0D1A;
+    --bg3: #12121F;
+    --border: #1C1C2E;
+    --border2: #252538;
+    --text: #E2DED8;
+    --text2: #8A8AA8;
+    --text3: #4A4A68;
+    --accent: #F59E0B;
+    --accent2: #D97706;
+    --green: #10B981;
+    --red: #EF4444;
+    --claude: #F59E0B;
+    --chatgpt: #10B981;
+    --gemini: #3B82F6;
+    --copilot: #8B5CF6;
+    --other: #6B7280;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+  }
+
+  /* SIDEBAR */
+  #sidebar {
+    width: 220px;
+    min-height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+  }
+  .logo {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 0.05em;
+  }
+  .logo-sub {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.12em;
+    margin-top: 3px;
+  }
+  .nav { padding: 12px 0; flex: 1; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 20px;
+    cursor: pointer;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .nav-item:hover { color: var(--text2); background: rgba(255,255,255,0.02); }
+  .nav-item.active {
+    color: var(--accent);
+    background: rgba(245,158,11,0.07);
+    border-left-color: var(--accent);
+  }
+  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--border);
+    padding: 1px 7px;
+    border-radius: 3px;
+    font-size: 10px;
+    color: var(--text3);
+  }
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .sidebar-footer div { font-size: 10px; color: var(--text3); letter-spacing: 0.08em; }
+
+  /* MAIN */
+  #main {
+    margin-left: 220px;
+    flex: 1;
+    padding: 32px;
+    min-height: 100vh;
+  }
+
+  /* PAGE HEADER */
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .page-sub { font-size: 11px; color: var(--text3); margin-top: 4px; letter-spacing: 0.08em; }
+
+  /* BUTTONS */
+  .btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: #080808; }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text2);
+    border: 1px solid var(--border2);
+  }
+  .btn-ghost:hover { border-color: var(--text3); color: var(--text); }
+  .btn-danger { background: var(--red); color: white; }
+  .btn-danger:hover { background: #DC2626; }
+  .btn-sm { padding: 6px 14px; font-size: 10px; }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+  }
+  .card-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text3);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  /* STAT CARDS */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    border-top-width: 3px;
+  }
+  .stat-number { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; }
+  .stat-label { font-size: 10px; color: var(--text3); letter-spacing: 0.12em; margin-top: 4px; }
+
+  /* CONVERSATION CARDS */
+  .conv-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 10px;
+  }
+  .conv-card:hover {
+    background: var(--bg3);
+    border-color: var(--border2);
+    transform: translateY(-1px);
+  }
+  .conv-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .conv-icon { font-size: 15px; }
+  .conv-title { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
+  .conv-date { font-size: 10px; color: var(--text3); }
+  .conv-summary { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+  }
+
+  /* FORM ELEMENTS */
+  input, textarea, select {
+    width: 100%;
+    background: #060610;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 11px 14px;
+    color: var(--text);
+    font-size: 13px;
+    font-family: 'DM Mono', monospace;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  textarea { resize: vertical; min-height: 200px; line-height: 1.6; }
+  select { cursor: pointer; }
+  .form-label {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .form-group { margin-bottom: 16px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  /* MODAL */
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  #modal-overlay.open { display: flex; }
+  #modal-box {
+    background: var(--bg2);
+    border: 1px solid var(--border2);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 680px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+  }
+  .modal-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .modal-icon { font-size: 26px; }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); }
+  .modal-date { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .modal-close {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+    border-radius: 6px;
+    width: 32px; height: 32px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .modal-close:hover { border-color: var(--text2); color: var(--text); }
+  .modal-section { margin-bottom: 18px; }
+  .modal-section-label { font-size: 10px; color: var(--text3); letter-spacing: 0.12em; margin-bottom: 8px; text-transform: uppercase; }
+  .modal-text {
+    font-size: 13px; color: var(--text2); line-height: 1.7;
+    background: #060610; padding: 14px; border-radius: 8px;
+  }
+  .key-point {
+    display: flex; gap: 10px; margin-bottom: 8px;
+    font-size: 12px; color: var(--text2);
+  }
+  .key-point-dot { color: var(--accent); }
+  .modal-footer {
+    display: flex; justify-content: flex-end; gap: 10px;
+    padding-top: 18px; border-top: 1px solid var(--border);
+    margin-top: 4px;
+  }
+  .raw-text {
+    font-size: 11px; color: var(--text3); line-height: 1.6;
+    background: #060610; padding: 14px; border-radius: 8px;
+    max-height: 180px; overflow-y: auto; white-space: pre-wrap;
+  }
+
+  /* NOTIFICATION */
+  #notification {
+    display: none;
+    position: fixed;
+    bottom: 24px; right: 24px;
+    border-radius: 8px;
+    padding: 14px 20px;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    z-index: 2000;
+    max-width: 340px;
+    animation: slideIn 0.2s ease;
+  }
+  #notification.success {
+    background: #0A1F14;
+    border: 1px solid var(--green);
+    color: #6EE7B7;
+  }
+  #notification.error {
+    background: #1F0A0A;
+    border: 1px solid var(--red);
+    color: #FCA5A5;
+  }
+  @keyframes slideIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* LOADING */
+  #loading-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 16px;
+  }
+  #loading-screen.show { display: flex; }
+  .loading-icon {
+    font-size: 36px;
+    color: var(--accent);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .loading-text { font-size: 12px; color: var(--accent); letter-spacing: 0.2em; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.95)} }
+
+  /* VIEWS */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* IMPORT STEPS */
+  .import-step { display: none; }
+  .import-step.active { display: block; }
+  .analyzing-box {
+    text-align: center; padding: 60px 20px;
+  }
+  .analyzing-icon { font-size: 48px; color: var(--accent); animation: pulse 1.4s infinite; margin-bottom: 16px; }
+  .analyzing-text { font-size: 13px; color: var(--accent); letter-spacing: 0.2em; }
+  .analyzing-sub { font-size: 12px; color: var(--text3); margin-top: 8px; }
+
+  /* SEARCH */
+  .search-bar { display: flex; gap: 12px; }
+  .search-results-label { font-size: 11px; color: var(--text3); letter-spacing: 0.1em; margin: 16px 0 12px; }
+
+  /* EMPTY STATE */
+  .empty {
+    text-align: center; padding: 60px 20px; color: var(--text3);
+  }
+  .empty-icon { font-size: 48px; margin-bottom: 14px; opacity: 0.3; }
+  .empty-text { font-size: 13px; line-height: 1.7; }
+
+  /* CATEGORY CHIPS */
+  .cat-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+  .cat-chip {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cat-chip:hover { border-color: var(--accent); }
+  .cat-chip-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
+  .cat-chip-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 10px; align-items: center; }
+  .filters select { width: auto; font-size: 11px; }
+
+  /* CHAR COUNT */
+  .char-count { font-size: 11px; color: var(--text3); }
+
+  /* REVIEW HINT */
+  .review-hint {
+    font-size: 11px; color: var(--green); letter-spacing: 0.12em;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading-screen" class="show">
+  <div class="loading-icon">◆</div>
+  <div class="loading-text">CARICAMENTO...</div>
+</div>
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <div class="logo">
+    <div class="logo-title">◆ AI Hub</div>
+    <div class="logo-sub">Knowledge Manager</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-item active" onclick="showView('dashboard')">
+      <span class="nav-icon">▦</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showView('import')">
+      <span class="nav-icon">↓</span> Importa
+    </div>
+    <div class="nav-item" onclick="showView('search')">
+      <span class="nav-icon">◎</span> Cerca
+    </div>
+    <div class="nav-item" onclick="showView('library')">
+      <span class="nav-icon">≡</span> Libreria
+      <span class="nav-badge" id="nav-count">0</span>
+    </div>
+  </nav>
+  <div class="sidebar-footer">
+    <div>● SUPABASE CONNESSO</div>
+    <div style="margin-top:4px;font-size:9px;">gbznofvb...</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+  <!-- DASHBOARD -->
+  <div id="view-dashboard" class="view active">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Dashboard</div>
+        <div class="page-sub">Panoramica del tuo Knowledge Hub</div>
+      </div>
+      <button class="btn btn-primary" onclick="showView('import')">+ IMPORTA</button>
+    </div>
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card" style="border-top-color:var(--accent)">
+        <div class="stat-number" style="color:var(--accent)" id="stat-total">0</div>
+        <div class="stat-label">CONVERSAZIONI</div>
+      </div>
+      <div class="stat-card" style="border-top-color:var(--claude)">
+        <div class="stat-number" style="color:var(--claude)" id="stat-claude">0</div>
+        <div class="stat-label">◆ CLAUDE</div>
+      </div>
+      <div class="stat-card" style="border-top-color:var(--chatgpt)">
+        <div class="stat-number" style="color:var(--chatgpt)" id="stat-chatgpt">0</div>
+        <div class="stat-label">⬡ CHATGPT</div>
+      </div>
+      <div class="stat-card" style="border-top-color:var(--gemini)">
+        <div class="stat-number" style="color:var(--gemini)" id="stat-gemini">0</div>
+        <div class="stat-label">✦ GEMINI</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-label">RECENTI</div>
+      <div id="recent-list">
+        <div class="empty">
+          <div class="empty-icon">◆</div>
+          <div class="empty-text">Nessuna conversazione ancora.<br>Inizia importando la tua prima chat.</div>
+          <button class="btn btn-primary" style="margin-top:20px" onclick="showView('import')">IMPORTA ORA</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="cat-card" style="display:none">
+      <div class="card-label">PER CATEGORIA</div>
+      <div class="cat-grid" id="cat-grid"></div>
+    </div>
+  </div>
+
+  <!-- IMPORT -->
+  <div id="view-import" class="view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Importa Conversazione</div>
+        <div class="page-sub">Incolla il testo — l'AI fa il resto</div>
+      </div>
+    </div>
+
+    <!-- Step 1: Input -->
+    <div id="step-input" class="import-step active card">
+      <div class="card-label" style="color:var(--accent)">PASSO 1 — INCOLLA LA CONVERSAZIONE</div>
+      <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:16px">
+        Seleziona tutto il testo della conversazione (Ctrl+A), copialo e incollalo qui sotto.<br>
+        Funziona con Claude, ChatGPT, Gemini, Copilot — qualsiasi AI.
+      </p>
+      <div class="form-group">
+        <textarea id="import-text" placeholder="Incolla qui la tua conversazione...
+
+L'AI analizzerà automaticamente:
+• Titolo descrittivo
+• Sommario
+• AI usata (Claude / ChatGPT / Gemini / Copilot)
+• Categoria
+• Tag
+• Punti chiave" oninput="updateCharCount()"></textarea>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="char-count" id="char-count">0 caratteri</span>
+        <button class="btn btn-primary" onclick="startAnalysis()">◆ ANALIZZA CON AI →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Analyzing -->
+    <div id="step-analyzing" class="import-step card">
+      <div class="analyzing-box">
+        <div class="analyzing-icon">◆</div>
+        <div class="analyzing-text">ANALISI IN CORSO...</div>
+        <div class="analyzing-sub">Claude sta classificando la conversazione</div>
+      </div>
+    </div>
+
+    <!-- Step 3: Review -->
+    <div id="step-review" class="import-step">
+      <div class="review-hint">✓ ANALISI COMPLETATA — REVISIONA E SALVA</div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="form-group">
+            <div class="form-label">Titolo</div>
+            <input type="text" id="r-title">
+          </div>
+          <div class="form-group">
+            <div class="form-label">AI Source</div>
+            <select id="r-ai">
+              <option>Claude</option>
+              <option>ChatGPT</option>
+              <option>Gemini</option>
+              <option>Copilot</option>
+              <option>Altro</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <div class="form-label">Categoria</div>
+            <input type="text" id="r-category">
+          </div>
+          <div class="form-group">
+            <div class="form-label">Tag (separati da virgola)</div>
+            <input type="text" id="r-tags">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Sommario</div>
+          <textarea id="r-summary" style="min-height:90px"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Punti chiave (separati da ||)</div>
+          <textarea id="r-keypoints" style="min-height:90px"></textarea>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <button class="btn btn-ghost" onclick="backToInput()">← INDIETRO</button>
+          <button class="btn btn-primary" onclick="saveConversation()">✓ SALVA NEL DATABASE</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div id="view-search" class="view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Cerca</div>
+        <div class="page-sub">Ricerca full-text in tutte le conversazioni</div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:20px">
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Cerca per argomento, parola chiave, tag, categoria..." onkeydown="if(event.key==='Enter')doSearch()">
+        <button class="btn btn-primary" onclick="doSearch()">CERCA</button>
+        <button class="btn btn-ghost" onclick="clearSearch()" id="clear-search-btn" style="display:none">RESET</button>
+      </div>
+    </div>
+    <div id="search-results-label" class="search-results-label" style="display:none"></div>
+    <div id="search-results"></div>
+  </div>
+
+  <!-- LIBRARY -->
+  <div id="view-library" class="view">
+    <div class="page-header">
+      <div>
+        <div class="page-title">Libreria</div>
+        <div class="page-sub" id="library-count">0 conversazioni</div>
+      </div>
+      <div class="filters">
+        <select id="filter-ai" onchange="applyFilters()">
+          <option value="all">Tutte le AI</option>
+        </select>
+        <select id="filter-cat" onchange="applyFilters()">
+          <option value="all">Tutte le categorie</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="resetFilters()" id="reset-filters-btn" style="display:none">RESET</button>
+      </div>
+    </div>
+    <div id="library-list"></div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- MODAL -->
+<div id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div id="modal-box">
+    <div class="modal-header">
+      <div class="modal-icon" id="modal-icon"></div>
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-date" id="modal-date"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Sommario</div>
+      <div class="modal-text" id="modal-summary"></div>
+    </div>
+    <div class="modal-section" id="modal-kp-section">
+      <div class="modal-section-label">Punti Chiave</div>
+      <div id="modal-keypoints"></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-label">Tag & Categoria</div>
+      <div id="modal-tags"></div>
+    </div>
+    <div class="modal-section" id="modal-raw-section">
+      <div class="modal-section-label">Testo Originale</div>
+      <div class="raw-text" id="modal-raw"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger" onclick="deleteConversation()">ELIMINA</button>
+      <button class="btn btn-ghost" onclick="closeModal()">CHIUDI</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notification"></div>
+
+<script>
+const SUPABASE_URL = "https://gbznofvbibfpamtegirb.supabase.co";
+const SUPABASE_KEY = "sb_publishable_Ta3MSLDcxMQNFJmmr52a7w_Ziwq_IjG";
+
+const AI_COLORS = { Claude:"#F59E0B", ChatGPT:"#10B981", Gemini:"#3B82F6", Copilot:"#8B5CF6", Altro:"#6B7280", Unknown:"#6B7280", Sconosciuto:"#6B7280" };
+const AI_ICONS  = { Claude:"◆", ChatGPT:"⬡", Gemini:"✦", Copilot:"⬟", Altro:"○", Unknown:"○", Sconosciuto:"○" };
+
+let allConversations = [];
+let currentId = null;
+
+// ─── DB ───────────────────────────────────────────────────────────────────────
+async function dbGet(path) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+  });
+  return r.json();
+}
+async function dbPost(table, data) {
+  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: "POST",
+    headers: {
+      "Content-Type":"application/json",
+      apikey: SUPABASE_KEY,
+      Authorization: `Bearer ${SUPABASE_KEY}`,
+      Prefer: "return=representation"
+    },
+    body: JSON.stringify(data)
+  });
+  return r.json();
+}
+async function dbDelete(table, id) {
+  await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+    method: "DELETE",
+    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
+  });
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+async function init() {
+  try {
+    const data = await dbGet("conversations?select=*&order=created_at.desc");
+    if (Array.isArray(data)) {
+      allConversations = data;
+      renderAll();
+    } else {
+      showError("Errore connessione DB. Controlla la chiave Supabase.");
+    }
+  } catch(e) {
+    showError("Errore di rete: " + e.message);
+  }
+  document.getElementById("loading-screen").classList.remove("show");
+}
+
+function renderAll() {
+  renderStats();
+  renderRecent();
+  renderCategories();
+  renderLibrary(allConversations);
+  populateFilters();
+  document.getElementById("nav-count").textContent = allConversations.length;
+}
+
+// ─── STATS ────────────────────────────────────────────────────────────────────
+function renderStats() {
+  document.getElementById("stat-total").textContent = allConversations.length;
+  document.getElementById("stat-claude").textContent  = allConversations.filter(c=>c.ai_source==="Claude").length;
+  document.getElementById("stat-chatgpt").textContent = allConversations.filter(c=>c.ai_source==="ChatGPT").length;
+  document.getElementById("stat-gemini").textContent  = allConversations.filter(c=>c.ai_source==="Gemini").length;
+}
+
+// ─── RECENT ───────────────────────────────────────────────────────────────────
+function renderRecent() {
+  const el = document.getElementById("recent-list");
+  if (!allConversations.length) {
+    el.innerHTML = `<div class="empty">
+      <div class="empty-icon">◆</div>
+      <div class="empty-text">Nessuna conversazione ancora.<br>Inizia importando la tua prima chat.</div>
+      <button class="btn btn-primary" style="margin-top:20px" onclick="showView('import')">IMPORTA ORA</button>
+    </div>`;
+    return;
+  }
+  el.innerHTML = allConversations.slice(0,6).map(c => convCardHTML(c)).join("");
+}
+
+// ─── CATEGORIES ───────────────────────────────────────────────────────────────
+function renderCategories() {
+  const cats = {};
+  allConversations.forEach(c => { if(c.category) cats[c.category] = (cats[c.category]||0)+1; });
+  const grid = document.getElementById("cat-grid");
+  const card = document.getElementById("cat-card");
+  if (!Object.keys(cats).length) { card.style.display="none"; return; }
+  card.style.display="block";
+  grid.innerHTML = Object.entries(cats).map(([cat,n]) => `
+    <div class="cat-chip" onclick="filterByCategory('${cat}')">
+      <div class="cat-chip-num">${n}</div>
+      <div class="cat-chip-label">${cat}</div>
+    </div>
+  `).join("");
+}
+
+// ─── LIBRARY ──────────────────────────────────────────────────────────────────
+function renderLibrary(list) {
+  const el = document.getElementById("library-list");
+  document.getElementById("library-count").textContent = list.length + " conversazioni";
+  if (!list.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-icon">≡</div><div class="empty-text">Nessuna conversazione trovata.</div></div>`;
+    return;
+  }
+  el.innerHTML = list.map(c => convCardHTML(c)).join("");
+}
+
+function convCardHTML(c) {
+  const color = AI_COLORS[c.ai_source] || "#6B7280";
+  const icon  = AI_ICONS[c.ai_source]  || "○";
+  const date  = new Date(c.created_at).toLocaleDateString("it-IT");
+  const tagsHTML = [
+    tagHTML(c.ai_source, color),
+    tagHTML(c.category, "#4A4A68"),
+    ...(c.tags||"").split(",").slice(0,3).map(t=>t.trim()).filter(Boolean).map(t=>tagHTML(t,"#333350"))
+  ].join("");
+  return `<div class="conv-card" onclick="openModal('${c.id}')">
+    <div class="conv-header">
+      <span class="conv-icon" style="color:${color}">${icon}</span>
+      <span class="conv-title">${esc(c.title)}</span>
+      <span class="conv-date">${date}</span>
+    </div>
+    <div class="conv-summary">${esc(c.summary||"")}</div>
+    <div class="tags">${tagsHTML}</div>
+  </div>`;
+}
+
+function tagHTML(text, color) {
+  if (!text) return "";
+  return `<span class="tag" style="background:${color}18;border:1px solid ${color}40;color:${color}">${esc(text)}</span>`;
+}
+
+// ─── FILTERS ──────────────────────────────────────────────────────────────────
+function populateFilters() {
+  const ais  = [...new Set(allConversations.map(c=>c.ai_source).filter(Boolean))];
+  const cats = [...new Set(allConversations.map(c=>c.category).filter(Boolean))];
+  const aiSel  = document.getElementById("filter-ai");
+  const catSel = document.getElementById("filter-cat");
+  aiSel.innerHTML  = `<option value="all">Tutte le AI</option>` + ais.map(a=>`<option>${a}</option>`).join("");
+  catSel.innerHTML = `<option value="all">Tutte le categorie</option>` + cats.map(c=>`<option>${c}</option>`).join("");
+}
+
+function applyFilters() {
+  const ai  = document.getElementById("filter-ai").value;
+  const cat = document.getElementById("filter-cat").value;
+  const btn = document.getElementById("reset-filters-btn");
+  btn.style.display = (ai!=="all"||cat!=="all") ? "inline-block" : "none";
+  const filtered = allConversations.filter(c =>
+    (ai==="all"||c.ai_source===ai) && (cat==="all"||c.category===cat)
+  );
+  renderLibrary(filtered);
+}
+
+function resetFilters() {
+  document.getElementById("filter-ai").value  = "all";
+  document.getElementById("filter-cat").value = "all";
+  document.getElementById("reset-filters-btn").style.display = "none";
+  renderLibrary(allConversations);
+}
+
+function filterByCategory(cat) {
+  showView("library");
+  document.getElementById("filter-cat").value = cat;
+  applyFilters();
+}
+
+// ─── IMPORT ───────────────────────────────────────────────────────────────────
+function updateCharCount() {
+  const len = document.getElementById("import-text").value.length;
+  document.getElementById("char-count").textContent = len.toLocaleString("it-IT") + " caratteri";
+}
+
+function showImportStep(step) {
+  document.querySelectorAll(".import-step").forEach(el => el.classList.remove("active"));
+  document.getElementById("step-"+step).classList.add("active");
+}
+
+async function startAnalysis() {
+  const text = document.getElementById("import-text").value.trim();
+  if (!text) { notify("Incolla prima una conversazione.", "error"); return; }
+  showImportStep("analyzing");
+
+  try {
+    const prompt = `Analizza questa conversazione con un'AI e rispondi SOLO con un oggetto JSON valido, senza markdown, senza backtick, senza testo extra.
+
+Il JSON deve avere esattamente questi campi:
+{
+  "title": "titolo breve e descrittivo (max 8 parole)",
+  "summary": "riassunto chiaro in 2-3 frasi",
+  "ai_source": "nome dell'AI (Claude/ChatGPT/Gemini/Copilot/Altro)",
+  "category": "categoria principale (es: IT & Tech, Programmazione, Medicina, Legale, Business, Creatività, Scienza, Generale)",
+  "tags": "tag1, tag2, tag3, tag4, tag5",
+  "key_points": "punto1 || punto2 || punto3",
+  "conversation_date": "data se trovata nel testo in formato YYYY-MM-DD, altrimenti stringa vuota"
+}
+
+CONVERSAZIONE DA ANALIZZARE:
+${text.substring(0, 4000)}`;
+
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content?.[0]?.text || "{}";
+    let parsed;
+    try { parsed = JSON.parse(raw.replace(/```json|```/g,"").trim()); }
+    catch { parsed = { title:"Conversazione importata", summary:"Analisi non disponibile.", ai_source:"Altro", category:"Generale", tags:"", key_points:"", conversation_date:"" }; }
+
+    document.getElementById("r-title").value    = parsed.title || "";
+    document.getElementById("r-ai").value       = parsed.ai_source || "Altro";
+    document.getElementById("r-category").value = parsed.category || "Generale";
+    document.getElementById("r-tags").value     = parsed.tags || "";
+    document.getElementById("r-summary").value  = parsed.summary || "";
+    document.getElementById("r-keypoints").value= parsed.key_points || "";
+    showImportStep("review");
+
+  } catch(e) {
+    notify("Errore analisi AI: " + e.message, "error");
+    showImportStep("input");
+  }
+}
+
+function backToInput() { showImportStep("input"); }
+
+async function saveConversation() {
+  const obj = {
+    title:             document.getElementById("r-title").value,
+    ai_source:         document.getElementById("r-ai").value,
+    category:          document.getElementById("r-category").value,
+    tags:              document.getElementById("r-tags").value,
+    summary:           document.getElementById("r-summary").value,
+    key_points:        document.getElementById("r-keypoints").value,
+    raw_text:          document.getElementById("import-text").value,
+    conversation_date: ""
+  };
+  if (!obj.title) { notify("Il titolo è obbligatorio.", "error"); return; }
+
+  try {
+    const result = await dbPost("conversations", obj);
+    if (Array.isArray(result) && result.length) {
+      allConversations.unshift(result[0]);
+      renderAll();
+      notify("Conversazione salvata!");
+      document.getElementById("import-text").value = "";
+      document.getElementById("char-count").textContent = "0 caratteri";
+      showImportStep("input");
+      showView("dashboard");
+    } else {
+      notify("Errore nel salvataggio.", "error");
+    }
+  } catch(e) {
+    notify("Errore: " + e.message, "error");
+  }
+}
+
+// ─── SEARCH ───────────────────────────────────────────────────────────────────
+async function doSearch() {
+  const q = document.getElementById("search-input").value.trim();
+  if (!q) return;
+  const enc = encodeURIComponent(q);
+  const url = `conversations?select=*&or=(title.ilike.*${enc}*,summary.ilike.*${enc}*,tags.ilike.*${enc}*,category.ilike.*${enc}*,raw_text.ilike.*${enc}*)&order=created_at.desc`;
+  const data = await dbGet(url);
+  const results = Array.isArray(data) ? data : [];
+
+  const label = document.getElementById("search-results-label");
+  label.style.display = "block";
+  label.textContent = `${results.length} risultati per "${q}"`;
+
+  document.getElementById("clear-search-btn").style.display = "inline-block";
+  const el = document.getElementById("search-results");
+  if (!results.length) {
+    el.innerHTML = `<div class="empty"><div class="empty-text">Nessun risultato trovato.</div></div>`;
+  } else {
+    el.innerHTML = results.map(c => convCardHTML(c)).join("");
+  }
+}
+
+function clearSearch() {
+  document.getElementById("search-input").value = "";
+  document.getElementById("search-results").innerHTML = "";
+  document.getElementById("search-results-label").style.display = "none";
+  document.getElementById("clear-search-btn").style.display = "none";
+}
+
+// ─── MODAL ────────────────────────────────────────────────────────────────────
+function openModal(id) {
+  const c = allConversations.find(x => x.id === id);
+  if (!c) return;
+  currentId = id;
+  const color = AI_COLORS[c.ai_source] || "#6B7280";
+  const icon  = AI_ICONS[c.ai_source]  || "○";
+  document.getElementById("modal-icon").textContent = icon;
+  document.getElementById("modal-icon").style.color = color;
+  document.getElementById("modal-title").textContent = c.title;
+  document.getElementById("modal-date").textContent  = new Date(c.created_at).toLocaleDateString("it-IT",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+  document.getElementById("modal-summary").textContent = c.summary || "—";
+
+  const kpSection = document.getElementById("modal-kp-section");
+  const kpEl = document.getElementById("modal-keypoints");
+  if (c.key_points) {
+    kpSection.style.display = "block";
+    kpEl.innerHTML = c.key_points.split("||").map(p=>p.trim()).filter(Boolean).map(p =>
+      `<div class="key-point"><span class="key-point-dot">◆</span><span>${esc(p)}</span></div>`
+    ).join("");
+  } else {
+    kpSection.style.display = "none";
+  }
+
+  const tagsEl = document.getElementById("modal-tags");
+  tagsEl.innerHTML = [
+    tagHTML(c.ai_source, color),
+    tagHTML(c.category, "#4A4A68"),
+    ...(c.tags||"").split(",").map(t=>t.trim()).filter(Boolean).map(t=>tagHTML(t,"#333350"))
+  ].join("");
+
+  const rawSection = document.getElementById("modal-raw-section");
+  if (c.raw_text) {
+    rawSection.style.display = "block";
+    document.getElementById("modal-raw").textContent = c.raw_text;
+  } else {
+    rawSection.style.display = "none";
+  }
+
+  document.getElementById("modal-overlay").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("open");
+  currentId = null;
+}
+
+async function deleteConversation() {
+  if (!currentId) return;
+  if (!confirm("Eliminare questa conversazione? L'operazione non è reversibile.")) return;
+  await dbDelete("conversations", currentId);
+  allConversations = allConversations.filter(c => c.id !== currentId);
+  renderAll();
+  closeModal();
+  notify("Conversazione eliminata.");
+}
+
+// ─── NAV ──────────────────────────────────────────────────────────────────────
+function showView(name) {
+  document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+  document.getElementById("view-"+name).classList.add("active");
+  const items = document.querySelectorAll(".nav-item");
+  const map = { dashboard:0, import:1, search:2, library:3 };
+  if (map[name] !== undefined) items[map[name]].classList.add("active");
+  if (name === "import") showImportStep("input");
+}
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+function esc(str) {
+  return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function notify(msg, type="success") {
+  const el = document.getElementById("notification");
+  el.textContent = (type==="success" ? "✓ " : "✗ ") + msg;
+  el.className = type;
+  el.style.display = "block";
+  setTimeout(() => { el.style.display = "none"; }, 3500);
+}
+
+function showError(msg) {
+  document.getElementById("main").innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:center;min-height:80vh">
+      <div class="card" style="max-width:480px;text-align:center">
+        <div style="font-size:36px;margin-bottom:14px">⚠</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;color:var(--accent);margin-bottom:12px">ERRORE</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.7">${msg}</div>
+      </div>
+    </div>`;
+}
+
+// ─── START ────────────────────────────────────────────────────────────────────
+window.addEventListener("DOMContentLoaded", init);
+</script>
+</body>
+</html>
