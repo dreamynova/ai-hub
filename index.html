@@ -7,23 +7,21 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #08080F;
-    --bg2: #0D0D1A;
-    --bg3: #12121F;
-    --border: #1C1C2E;
-    --border2: #252538;
-    --text: #E2DED8;
-    --text2: #8A8AA8;
-    --text3: #4A4A68;
-    --accent: #F59E0B;
-    --accent2: #D97706;
-    --green: #10B981;
-    --red: #EF4444;
-    --claude: #F59E0B;
-    --chatgpt: #10B981;
-    --gemini: #3B82F6;
-    --copilot: #8B5CF6;
-    --other: #6B7280;
+    --accent:      #2563EB;
+    --accent2:     #1D4ED8;
+    --accent-soft: #EFF6FF;
+    --bg:          #F4F3EF;
+    --bg2:         #FAFAF8;
+    --bg3:         #EEECEA;
+    --border:      #DDD9D0;
+    --border2:     #CCCAC0;
+    --text:        #1A1916;
+    --text2:       #5C5950;
+    --text3:       #9C9890;
+    --green:       #16A34A;
+    --red:         #DC2626;
+    --shadow:      0 1px 3px rgba(0,0,0,0.06), 0 4px 14px rgba(0,0,0,0.04);
+    --shadow-md:   0 4px 16px rgba(0,0,0,0.10), 0 8px 32px rgba(0,0,0,0.06);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -32,9 +30,10 @@
     font-family: 'DM Mono', monospace;
     min-height: 100vh;
     display: flex;
+    font-size: 13px;
   }
 
-  /* SIDEBAR */
+  /* ── SIDEBAR ── */
   #sidebar {
     width: 220px;
     min-height: 100vh;
@@ -47,444 +46,367 @@
     z-index: 100;
   }
   .logo {
-    padding: 24px 20px 20px;
+    padding: 26px 20px 22px;
     border-bottom: 1px solid var(--border);
   }
   .logo-title {
     font-family: 'Syne', sans-serif;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 800;
     color: var(--accent);
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
   }
   .logo-sub {
     font-size: 10px;
     color: var(--text3);
     letter-spacing: 0.12em;
     margin-top: 3px;
+    text-transform: uppercase;
   }
   .nav { padding: 12px 0; flex: 1; }
   .nav-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 11px 20px;
+    padding: 10px 20px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 11px;
     letter-spacing: 0.08em;
     color: var(--text3);
     border-left: 2px solid transparent;
     transition: all 0.15s;
   }
-  .nav-item:hover { color: var(--text2); background: rgba(255,255,255,0.02); }
+  .nav-item:hover { color: var(--text2); background: var(--bg3); }
   .nav-item.active {
     color: var(--accent);
-    background: rgba(245,158,11,0.07);
+    background: var(--accent-soft);
     border-left-color: var(--accent);
   }
-  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+  .nav-icon { font-size: 14px; width: 16px; text-align: center; }
   .nav-badge {
     margin-left: auto;
-    background: var(--border);
+    background: var(--bg3);
+    border: 1px solid var(--border);
     padding: 1px 7px;
     border-radius: 3px;
     font-size: 10px;
     color: var(--text3);
   }
+  .nav-item.active .nav-badge {
+    background: var(--accent-soft);
+    border-color: #BFDBFE;
+    color: var(--accent);
+  }
   .sidebar-footer {
     padding: 16px 20px;
     border-top: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 0.08em;
   }
-  .sidebar-footer div { font-size: 10px; color: var(--text3); letter-spacing: 0.08em; }
+  .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--green);
+    margin-right: 6px;
+    vertical-align: middle;
+  }
 
-  /* MAIN */
-  #main {
-    margin-left: 220px;
-    flex: 1;
-    padding: 32px;
-    min-height: 100vh;
-  }
+  /* ── MAIN ── */
+  #main { margin-left: 220px; flex: 1; padding: 32px 36px; min-height: 100vh; }
 
-  /* PAGE HEADER */
-  .page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 32px;
-  }
+  /* ── HEADER ── */
+  .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; }
   .page-title {
     font-family: 'Syne', sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 700;
     color: var(--text);
+    letter-spacing: 0.02em;
   }
-  .page-sub { font-size: 11px; color: var(--text3); margin-top: 4px; letter-spacing: 0.08em; }
+  .page-sub { font-size: 11px; color: var(--text3); margin-top: 4px; letter-spacing: 0.06em; }
 
-  /* BUTTONS */
+  /* ── BUTTONS ── */
   .btn {
-    padding: 10px 20px;
+    padding: 9px 18px;
     border: none;
-    border-radius: 7px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 11px;
     font-weight: 500;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     font-family: 'DM Mono', monospace;
     transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
   }
-  .btn-primary { background: var(--accent); color: #080808; }
-  .btn-primary:hover { background: var(--accent2); }
-  .btn-ghost {
-    background: transparent;
-    color: var(--text2);
-    border: 1px solid var(--border2);
-  }
-  .btn-ghost:hover { border-color: var(--text3); color: var(--text); }
-  .btn-danger { background: var(--red); color: white; }
-  .btn-danger:hover { background: #DC2626; }
-  .btn-sm { padding: 6px 14px; font-size: 10px; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent2); box-shadow: 0 2px 8px rgba(37,99,235,0.25); }
+  .btn-ghost { background: var(--bg2); color: var(--text2); border: 1px solid var(--border2); }
+  .btn-ghost:hover { background: var(--bg3); color: var(--text); }
+  .btn-danger { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+  .btn-danger:hover { background: #FEE2E2; }
+  .btn-sm { padding: 6px 12px; font-size: 10px; }
 
-  /* CARDS */
+  /* ── CARDS ── */
   .card {
     background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 22px;
+    box-shadow: var(--shadow);
   }
   .card-label {
     font-size: 10px;
     letter-spacing: 0.15em;
     color: var(--text3);
-    margin-bottom: 14px;
+    margin-bottom: 16px;
     text-transform: uppercase;
   }
 
-  /* STAT CARDS */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 14px;
-    margin-bottom: 28px;
-  }
+  /* ── STATS ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
   .stat-card {
     background: var(--bg2);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 20px;
-    border-top-width: 3px;
+    box-shadow: var(--shadow);
+    border-top: 3px solid var(--accent);
   }
-  .stat-number { font-family: 'Syne', sans-serif; font-size: 36px; font-weight: 800; }
-  .stat-label { font-size: 10px; color: var(--text3); letter-spacing: 0.12em; margin-top: 4px; }
+  .stat-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+  .stat-label { font-size: 10px; color: var(--text3); letter-spacing: 0.1em; margin-top: 6px; text-transform: uppercase; }
 
-  /* CONVERSATION CARDS */
+  /* ── CONV CARDS ── */
   .conv-card {
     background: var(--bg2);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 18px;
+    padding: 16px 18px;
     cursor: pointer;
     transition: all 0.15s;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
+    box-shadow: var(--shadow);
   }
-  .conv-card:hover {
-    background: var(--bg3);
-    border-color: var(--border2);
-    transform: translateY(-1px);
+  .conv-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .conv-header { display: flex; align-items: center; gap: 10px; margin-bottom: 7px; }
+  .conv-ai-badge {
+    display: inline-flex; align-items: center;
+    padding: 2px 9px; border-radius: 3px;
+    font-size: 10px; font-weight: 500; letter-spacing: 0.08em;
+    border: 1px solid; flex-shrink: 0;
   }
-  .conv-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-  }
-  .conv-icon { font-size: 15px; }
-  .conv-title { font-size: 14px; font-weight: 500; color: var(--text); flex: 1; }
-  .conv-date { font-size: 10px; color: var(--text3); }
-  .conv-summary { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 10px; }
+  .conv-title { font-size: 13px; font-weight: 500; color: var(--text); flex: 1; line-height: 1.3; }
+  .conv-date { font-size: 10px; color: var(--text3); white-space: nowrap; }
+  .conv-summary { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 9px; }
   .tags { display: flex; flex-wrap: wrap; gap: 4px; }
   .tag {
     display: inline-block;
     padding: 2px 8px;
-    border-radius: 4px;
+    border-radius: 3px;
     font-size: 10px;
     letter-spacing: 0.06em;
+    border: 1px solid;
   }
 
-  /* FORM ELEMENTS */
-  input, textarea, select {
+  /* ── FORM ── */
+  input[type=text], textarea, select {
     width: 100%;
-    background: #060610;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 11px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 7px;
+    padding: 10px 13px;
     color: var(--text);
-    font-size: 13px;
+    font-size: 12px;
     font-family: 'DM Mono', monospace;
     outline: none;
-    transition: border-color 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
   }
-  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
-  textarea { resize: vertical; min-height: 200px; line-height: 1.6; }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.08);
+    background: var(--bg2);
+  }
+  textarea { resize: vertical; min-height: 180px; line-height: 1.6; }
   select { cursor: pointer; }
-  .form-label {
-    font-size: 10px;
-    color: var(--text3);
-    letter-spacing: 0.1em;
-    margin-bottom: 6px;
-    text-transform: uppercase;
-  }
-  .form-group { margin-bottom: 16px; }
-  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-label { font-size: 10px; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 6px; display: block; text-transform: uppercase; }
+  .form-group { margin-bottom: 15px; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+  .form-hint { font-size: 10px; color: var(--text3); margin-top: 4px; letter-spacing: 0.06em; }
 
-  /* MODAL */
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--accent-soft);
+    border: 1px solid #BFDBFE;
+    border-radius: 7px;
+    padding: 12px 15px;
+    font-size: 11px;
+    color: #1E40AF;
+    margin-bottom: 18px;
+    line-height: 1.7;
+    letter-spacing: 0.03em;
+  }
+
+  /* ── MODAL ── */
   #modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.88);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    display: none; position: fixed; inset: 0;
+    background: rgba(26,25,22,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 1000; align-items: center; justify-content: center; padding: 20px;
   }
   #modal-overlay.open { display: flex; }
   #modal-box {
-    background: var(--bg2);
-    border: 1px solid var(--border2);
-    border-radius: 16px;
-    padding: 32px;
-    max-width: 680px;
-    width: 100%;
-    max-height: 88vh;
-    overflow-y: auto;
+    background: var(--bg2); border: 1px solid var(--border2);
+    border-radius: 13px; padding: 30px; max-width: 660px; width: 100%;
+    max-height: 88vh; overflow-y: auto; box-shadow: var(--shadow-md);
   }
-  .modal-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    margin-bottom: 22px;
-  }
-  .modal-icon { font-size: 26px; }
-  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); }
-  .modal-date { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .modal-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); line-height: 1.3; flex: 1; }
+  .modal-meta { font-size: 11px; color: var(--text3); margin-top: 5px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; letter-spacing: 0.04em; }
   .modal-close {
-    margin-left: auto;
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text2);
-    border-radius: 6px;
-    width: 32px; height: 32px;
-    cursor: pointer;
-    font-size: 18px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: inherit;
-    transition: all 0.15s;
+    background: var(--bg3); border: 1px solid var(--border); color: var(--text2);
+    border-radius: 5px; width: 28px; height: 28px; cursor: pointer; font-size: 17px;
+    display: flex; align-items: center; justify-content: center; font-family: inherit; transition: all 0.15s; flex-shrink: 0;
   }
-  .modal-close:hover { border-color: var(--text2); color: var(--text); }
+  .modal-close:hover { background: var(--border); color: var(--text); }
   .modal-section { margin-bottom: 18px; }
-  .modal-section-label { font-size: 10px; color: var(--text3); letter-spacing: 0.12em; margin-bottom: 8px; text-transform: uppercase; }
-  .modal-text {
-    font-size: 13px; color: var(--text2); line-height: 1.7;
-    background: #060610; padding: 14px; border-radius: 8px;
-  }
-  .key-point {
-    display: flex; gap: 10px; margin-bottom: 8px;
-    font-size: 12px; color: var(--text2);
-  }
-  .key-point-dot { color: var(--accent); }
-  .modal-footer {
-    display: flex; justify-content: flex-end; gap: 10px;
-    padding-top: 18px; border-top: 1px solid var(--border);
-    margin-top: 4px;
-  }
+  .modal-section-label { font-size: 10px; letter-spacing: 0.15em; color: var(--text3); text-transform: uppercase; margin-bottom: 8px; }
+  .modal-text { font-size: 12px; color: var(--text2); line-height: 1.7; background: var(--bg); padding: 13px 15px; border-radius: 7px; border: 1px solid var(--border); }
+  .key-point { display: flex; gap: 10px; margin-bottom: 7px; font-size: 12px; color: var(--text2); align-items: flex-start; }
+  .key-point-dot { color: var(--accent); flex-shrink: 0; font-size: 14px; line-height: 1.3; }
   .raw-text {
     font-size: 11px; color: var(--text3); line-height: 1.6;
-    background: #060610; padding: 14px; border-radius: 8px;
+    background: var(--bg); padding: 13px 15px; border-radius: 7px;
     max-height: 180px; overflow-y: auto; white-space: pre-wrap;
+    border: 1px solid var(--border); font-family: monospace;
   }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding-top: 18px; border-top: 1px solid var(--border); margin-top: 6px; }
 
-  /* NOTIFICATION */
+  /* ── NOTIFICATION ── */
   #notification {
-    display: none;
-    position: fixed;
-    bottom: 24px; right: 24px;
-    border-radius: 8px;
-    padding: 14px 20px;
-    font-size: 12px;
-    letter-spacing: 0.08em;
-    z-index: 2000;
-    max-width: 340px;
-    animation: slideIn 0.2s ease;
+    display: none; position: fixed; bottom: 24px; right: 24px;
+    border-radius: 8px; padding: 13px 18px; font-size: 12px; letter-spacing: 0.06em;
+    z-index: 2000; max-width: 340px; box-shadow: var(--shadow-md);
+    animation: slideUp 0.2s ease;
   }
-  #notification.success {
-    background: #0A1F14;
-    border: 1px solid var(--green);
-    color: #6EE7B7;
-  }
-  #notification.error {
-    background: #1F0A0A;
-    border: 1px solid var(--red);
-    color: #FCA5A5;
-  }
-  @keyframes slideIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  #notification.success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #15803D; }
+  #notification.error   { background: #FEF2F2; border: 1px solid #FECACA; color: var(--red); }
+  @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-  /* LOADING */
+  /* ── LOADING ── */
   #loading-screen {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 16px;
+    display: none; position: fixed; inset: 0; background: var(--bg);
+    z-index: 9999; align-items: center; justify-content: center; flex-direction: column; gap: 14px;
   }
   #loading-screen.show { display: flex; }
-  .loading-icon {
-    font-size: 36px;
-    color: var(--accent);
-    animation: pulse 1.4s ease-in-out infinite;
-  }
-  .loading-text { font-size: 12px; color: var(--accent); letter-spacing: 0.2em; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.95)} }
+  .loading-spinner { width: 32px; height: 32px; border: 2px solid var(--border2); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 11px; color: var(--text3); letter-spacing: 0.15em; text-transform: uppercase; }
 
-  /* VIEWS */
+  /* ── VIEWS ── */
   .view { display: none; }
   .view.active { display: block; }
 
-  /* IMPORT STEPS */
-  .import-step { display: none; }
-  .import-step.active { display: block; }
-  .analyzing-box {
-    text-align: center; padding: 60px 20px;
-  }
-  .analyzing-icon { font-size: 48px; color: var(--accent); animation: pulse 1.4s infinite; margin-bottom: 16px; }
-  .analyzing-text { font-size: 13px; color: var(--accent); letter-spacing: 0.2em; }
-  .analyzing-sub { font-size: 12px; color: var(--text3); margin-top: 8px; }
+  /* ── SEARCH ── */
+  .search-bar { display: flex; gap: 10px; }
+  .search-bar input { flex: 1; }
 
-  /* SEARCH */
-  .search-bar { display: flex; gap: 12px; }
-  .search-results-label { font-size: 11px; color: var(--text3); letter-spacing: 0.1em; margin: 16px 0 12px; }
+  /* ── EMPTY ── */
+  .empty { text-align: center; padding: 50px 20px; color: var(--text3); }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-text { font-size: 12px; line-height: 1.7; color: var(--text2); letter-spacing: 0.04em; }
 
-  /* EMPTY STATE */
-  .empty {
-    text-align: center; padding: 60px 20px; color: var(--text3);
-  }
-  .empty-icon { font-size: 48px; margin-bottom: 14px; opacity: 0.3; }
-  .empty-text { font-size: 13px; line-height: 1.7; }
-
-  /* CATEGORY CHIPS */
+  /* ── CATEGORIES ── */
   .cat-grid { display: flex; flex-wrap: wrap; gap: 10px; }
   .cat-chip {
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 18px;
-    cursor: pointer;
-    transition: all 0.15s;
+    background: var(--bg); border: 1px solid var(--border2); border-radius: 8px;
+    padding: 12px 16px; cursor: pointer; transition: all 0.15s; min-width: 80px;
   }
-  .cat-chip:hover { border-color: var(--accent); }
-  .cat-chip-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; }
-  .cat-chip-label { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .cat-chip:hover { border-color: var(--accent); background: var(--accent-soft); }
+  .cat-chip-num { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; color: var(--accent); }
+  .cat-chip-label { font-size: 10px; color: var(--text2); margin-top: 2px; letter-spacing: 0.06em; }
 
-  /* FILTERS */
+  /* ── FILTERS ── */
   .filters { display: flex; gap: 10px; align-items: center; }
-  .filters select { width: auto; font-size: 11px; }
+  .filters select { width: auto; font-size: 11px; padding: 7px 11px; }
 
-  /* CHAR COUNT */
-  .char-count { font-size: 11px; color: var(--text3); }
+  /* ── SETTINGS ── */
+  .color-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .color-option { border: 1px solid var(--border); border-radius: 8px; padding: 14px 10px; cursor: pointer; text-align: center; transition: all 0.15s; }
+  .color-option:hover { border-color: var(--border2); }
+  .color-option.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .color-swatch { width: 28px; height: 28px; border-radius: 50%; margin: 0 auto 8px; }
+  .color-name { font-size: 11px; letter-spacing: 0.06em; color: var(--text2); }
 
-  /* REVIEW HINT */
-  .review-hint {
-    font-size: 11px; color: var(--green); letter-spacing: 0.12em;
-    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
-  }
-
-  /* SCROLLBAR */
+  /* ── MISC ── */
+  hr { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
   ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
 <div id="loading-screen" class="show">
-  <div class="loading-icon">◆</div>
-  <div class="loading-text">CARICAMENTO...</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Connessione in corso...</div>
 </div>
 
-<!-- SIDEBAR -->
 <div id="sidebar">
   <div class="logo">
     <div class="logo-title">◆ AI Hub</div>
     <div class="logo-sub">Knowledge Manager</div>
   </div>
   <nav class="nav">
-    <div class="nav-item active" onclick="showView('dashboard')">
-      <span class="nav-icon">▦</span> Dashboard
-    </div>
-    <div class="nav-item" onclick="showView('import')">
-      <span class="nav-icon">↓</span> Importa
-    </div>
-    <div class="nav-item" onclick="showView('search')">
-      <span class="nav-icon">◎</span> Cerca
-    </div>
-    <div class="nav-item" onclick="showView('library')">
-      <span class="nav-icon">≡</span> Libreria
-      <span class="nav-badge" id="nav-count">0</span>
-    </div>
+    <div class="nav-item active" onclick="showView('dashboard')"><span class="nav-icon">▦</span> Dashboard</div>
+    <div class="nav-item" onclick="showView('import')"><span class="nav-icon">↓</span> Importa</div>
+    <div class="nav-item" onclick="showView('search')"><span class="nav-icon">◎</span> Cerca</div>
+    <div class="nav-item" onclick="showView('library')"><span class="nav-icon">≡</span> Libreria <span class="nav-badge" id="nav-count">0</span></div>
+    <div class="nav-item" onclick="showView('settings')"><span class="nav-icon">⚙</span> Impostazioni</div>
   </nav>
-  <div class="sidebar-footer">
-    <div>● SUPABASE CONNESSO</div>
-    <div style="margin-top:4px;font-size:9px;">gbznofvb...</div>
-  </div>
+  <div class="sidebar-footer"><span class="dot"></span>Supabase connesso<br><span style="font-size:9px;opacity:0.6;margin-top:3px;display:block">gbznofvb...</span></div>
 </div>
 
-<!-- MAIN -->
 <div id="main">
 
   <!-- DASHBOARD -->
   <div id="view-dashboard" class="view active">
     <div class="page-header">
-      <div>
-        <div class="page-title">Dashboard</div>
-        <div class="page-sub">Panoramica del tuo Knowledge Hub</div>
-      </div>
-      <button class="btn btn-primary" onclick="showView('import')">+ IMPORTA</button>
+      <div><div class="page-title">Dashboard</div><div class="page-sub">Panoramica del tuo Knowledge Hub</div></div>
+      <button class="btn btn-primary" onclick="showView('import')">+ Importa</button>
     </div>
-    <div class="stats-grid" id="stats-grid">
-      <div class="stat-card" style="border-top-color:var(--accent)">
-        <div class="stat-number" style="color:var(--accent)" id="stat-total">0</div>
-        <div class="stat-label">CONVERSAZIONI</div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="stat-total">0</div><div class="stat-label">Conversazioni</div>
       </div>
-      <div class="stat-card" style="border-top-color:var(--claude)">
-        <div class="stat-number" style="color:var(--claude)" id="stat-claude">0</div>
-        <div class="stat-label">◆ CLAUDE</div>
+      <div class="stat-card" style="border-top-color:#F59E0B">
+        <div class="stat-number" style="color:#D97706" id="stat-claude">0</div><div class="stat-label">Claude</div>
       </div>
-      <div class="stat-card" style="border-top-color:var(--chatgpt)">
-        <div class="stat-number" style="color:var(--chatgpt)" id="stat-chatgpt">0</div>
-        <div class="stat-label">⬡ CHATGPT</div>
+      <div class="stat-card" style="border-top-color:#10B981">
+        <div class="stat-number" style="color:#059669" id="stat-chatgpt">0</div><div class="stat-label">ChatGPT</div>
       </div>
-      <div class="stat-card" style="border-top-color:var(--gemini)">
-        <div class="stat-number" style="color:var(--gemini)" id="stat-gemini">0</div>
-        <div class="stat-label">✦ GEMINI</div>
+      <div class="stat-card" style="border-top-color:#8B5CF6">
+        <div class="stat-number" style="color:#7C3AED" id="stat-other">0</div><div class="stat-label">Gemini / Altro</div>
       </div>
     </div>
-    <div class="card" style="margin-bottom:20px">
-      <div class="card-label">RECENTI</div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-label">Recenti</div>
       <div id="recent-list">
-        <div class="empty">
-          <div class="empty-icon">◆</div>
-          <div class="empty-text">Nessuna conversazione ancora.<br>Inizia importando la tua prima chat.</div>
-          <button class="btn btn-primary" style="margin-top:20px" onclick="showView('import')">IMPORTA ORA</button>
-        </div>
+        <div class="empty"><div class="empty-icon">◆</div><div class="empty-text">Nessuna conversazione ancora.<br>Inizia importando la tua prima chat.</div>
+        <button class="btn btn-primary" style="margin-top:18px" onclick="showView('import')">Importa ora</button></div>
       </div>
     </div>
     <div class="card" id="cat-card" style="display:none">
-      <div class="card-label">PER CATEGORIA</div>
+      <div class="card-label">Per categoria</div>
       <div class="cat-grid" id="cat-grid"></div>
     </div>
   </div>
@@ -492,85 +414,50 @@
   <!-- IMPORT -->
   <div id="view-import" class="view">
     <div class="page-header">
-      <div>
-        <div class="page-title">Importa Conversazione</div>
-        <div class="page-sub">Incolla il testo — l'AI fa il resto</div>
-      </div>
+      <div><div class="page-title">Importa conversazione</div><div class="page-sub">Compila i campi e salva nel database</div></div>
     </div>
-
-    <!-- Step 1: Input -->
-    <div id="step-input" class="import-step active card">
-      <div class="card-label" style="color:var(--accent)">PASSO 1 — INCOLLA LA CONVERSAZIONE</div>
-      <p style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:16px">
-        Seleziona tutto il testo della conversazione (Ctrl+A), copialo e incollalo qui sotto.<br>
-        Funziona con Claude, ChatGPT, Gemini, Copilot — qualsiasi AI.
-      </p>
+    <div class="info-box">
+      💡 Incolla il testo nel campo "Testo completo", poi compila titolo, categoria e tag.<br>
+      Per ottenere titolo e sommario automatici, chiedi a Claude: <em>"Analizza questa conversazione e dammi: titolo breve, sommario in 2 frasi, categoria, 5 tag"</em> — poi copia i risultati nei campi sottostanti.
+    </div>
+    <div class="card">
+      <div class="form-grid" style="margin-bottom:4px">
+        <div class="form-group">
+          <label class="form-label">Titolo *</label>
+          <input type="text" id="f-title" placeholder="Es: Configurazione server Windows 2022">
+        </div>
+        <div class="form-group">
+          <label class="form-label">AI utilizzata</label>
+          <select id="f-ai"><option>Claude</option><option>ChatGPT</option><option>Gemini</option><option>Copilot</option><option>Altro</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Categoria</label>
+          <input type="text" id="f-category" placeholder="Es: IT & Tech, Programmazione, Business...">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tag</label>
+          <input type="text" id="f-tags" placeholder="tag1, tag2, tag3">
+          <div class="form-hint">Separati da virgola</div>
+        </div>
+      </div>
       <div class="form-group">
-        <textarea id="import-text" placeholder="Incolla qui la tua conversazione...
-
-L'AI analizzerà automaticamente:
-• Titolo descrittivo
-• Sommario
-• AI usata (Claude / ChatGPT / Gemini / Copilot)
-• Categoria
-• Tag
-• Punti chiave" oninput="updateCharCount()"></textarea>
+        <label class="form-label">Sommario</label>
+        <textarea id="f-summary" style="min-height:80px" placeholder="Breve descrizione di cosa tratta la conversazione..."></textarea>
       </div>
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <span class="char-count" id="char-count">0 caratteri</span>
-        <button class="btn btn-primary" onclick="startAnalysis()">◆ ANALIZZA CON AI →</button>
+      <div class="form-group">
+        <label class="form-label">Punti chiave</label>
+        <textarea id="f-keypoints" style="min-height:75px" placeholder="Punto 1 || Punto 2 || Punto 3"></textarea>
+        <div class="form-hint">Separati da ||</div>
       </div>
-    </div>
-
-    <!-- Step 2: Analyzing -->
-    <div id="step-analyzing" class="import-step card">
-      <div class="analyzing-box">
-        <div class="analyzing-icon">◆</div>
-        <div class="analyzing-text">ANALISI IN CORSO...</div>
-        <div class="analyzing-sub">Claude sta classificando la conversazione</div>
+      <div class="form-group">
+        <label class="form-label">Testo completo della conversazione</label>
+        <textarea id="f-raw" style="min-height:160px" placeholder="Incolla qui il testo completo..."></textarea>
+        <div class="form-hint" id="char-count">0 caratteri</div>
       </div>
-    </div>
-
-    <!-- Step 3: Review -->
-    <div id="step-review" class="import-step">
-      <div class="review-hint">✓ ANALISI COMPLETATA — REVISIONA E SALVA</div>
-      <div class="card">
-        <div class="form-grid">
-          <div class="form-group">
-            <div class="form-label">Titolo</div>
-            <input type="text" id="r-title">
-          </div>
-          <div class="form-group">
-            <div class="form-label">AI Source</div>
-            <select id="r-ai">
-              <option>Claude</option>
-              <option>ChatGPT</option>
-              <option>Gemini</option>
-              <option>Copilot</option>
-              <option>Altro</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <div class="form-label">Categoria</div>
-            <input type="text" id="r-category">
-          </div>
-          <div class="form-group">
-            <div class="form-label">Tag (separati da virgola)</div>
-            <input type="text" id="r-tags">
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="form-label">Sommario</div>
-          <textarea id="r-summary" style="min-height:90px"></textarea>
-        </div>
-        <div class="form-group">
-          <div class="form-label">Punti chiave (separati da ||)</div>
-          <textarea id="r-keypoints" style="min-height:90px"></textarea>
-        </div>
-        <div style="display:flex;gap:10px;justify-content:flex-end">
-          <button class="btn btn-ghost" onclick="backToInput()">← INDIETRO</button>
-          <button class="btn btn-primary" onclick="saveConversation()">✓ SALVA NEL DATABASE</button>
-        </div>
+      <hr>
+      <div style="display:flex;justify-content:flex-end;gap:10px">
+        <button class="btn btn-ghost" onclick="clearForm()">Svuota campi</button>
+        <button class="btn btn-primary" onclick="saveConv()">✓ Salva nel database</button>
       </div>
     </div>
   </div>
@@ -578,468 +465,356 @@ L'AI analizzerà automaticamente:
   <!-- SEARCH -->
   <div id="view-search" class="view">
     <div class="page-header">
-      <div>
-        <div class="page-title">Cerca</div>
-        <div class="page-sub">Ricerca full-text in tutte le conversazioni</div>
-      </div>
+      <div><div class="page-title">Cerca</div><div class="page-sub">Ricerca full-text in tutte le conversazioni</div></div>
     </div>
-    <div class="card" style="margin-bottom:20px">
+    <div class="card" style="margin-bottom:18px">
       <div class="search-bar">
         <input type="text" id="search-input" placeholder="Cerca per argomento, parola chiave, tag, categoria..." onkeydown="if(event.key==='Enter')doSearch()">
-        <button class="btn btn-primary" onclick="doSearch()">CERCA</button>
-        <button class="btn btn-ghost" onclick="clearSearch()" id="clear-search-btn" style="display:none">RESET</button>
+        <button class="btn btn-primary" onclick="doSearch()">Cerca</button>
+        <button class="btn btn-ghost" onclick="clearSearch()" id="clear-btn" style="display:none">Reset</button>
       </div>
     </div>
-    <div id="search-results-label" class="search-results-label" style="display:none"></div>
+    <div id="search-label" style="font-size:11px;color:var(--text3);letter-spacing:0.08em;margin-bottom:12px;display:none"></div>
     <div id="search-results"></div>
   </div>
 
   <!-- LIBRARY -->
   <div id="view-library" class="view">
     <div class="page-header">
-      <div>
-        <div class="page-title">Libreria</div>
-        <div class="page-sub" id="library-count">0 conversazioni</div>
-      </div>
+      <div><div class="page-title">Libreria</div><div class="page-sub" id="library-count">0 conversazioni</div></div>
       <div class="filters">
-        <select id="filter-ai" onchange="applyFilters()">
-          <option value="all">Tutte le AI</option>
-        </select>
-        <select id="filter-cat" onchange="applyFilters()">
-          <option value="all">Tutte le categorie</option>
-        </select>
-        <button class="btn btn-ghost btn-sm" onclick="resetFilters()" id="reset-filters-btn" style="display:none">RESET</button>
+        <select id="filter-ai" onchange="applyFilters()"><option value="all">Tutte le AI</option></select>
+        <select id="filter-cat" onchange="applyFilters()"><option value="all">Tutte le categorie</option></select>
+        <button class="btn btn-ghost btn-sm" onclick="resetFilters()" id="reset-btn" style="display:none">Reset</button>
       </div>
     </div>
     <div id="library-list"></div>
   </div>
 
-</div><!-- /main -->
+  <!-- SETTINGS -->
+  <div id="view-settings" class="view">
+    <div class="page-header">
+      <div><div class="page-title">Impostazioni</div><div class="page-sub">Personalizza l'aspetto dell'app</div></div>
+    </div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-label">Colore principale</div>
+      <div class="color-grid" id="color-grid"></div>
+    </div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-label">Dimensione testo</div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" onclick="setFont('12px')">Piccolo</button>
+        <button class="btn btn-ghost" onclick="setFont('13px')">Medio</button>
+        <button class="btn btn-ghost" onclick="setFont('14px')">Grande</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Database</div>
+      <div style="font-size:12px;color:var(--text2);line-height:2;letter-spacing:0.04em">
+        <div>◆ <strong>Supabase:</strong> gbznofvbibfpamtegirb.supabase.co</div>
+        <div>≡ <strong>Conversazioni salvate:</strong> <span id="settings-count">0</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 <!-- MODAL -->
 <div id="modal-overlay" onclick="if(event.target===this)closeModal()">
   <div id="modal-box">
     <div class="modal-header">
-      <div class="modal-icon" id="modal-icon"></div>
-      <div>
+      <div style="flex:1">
         <div class="modal-title" id="modal-title"></div>
-        <div class="modal-date" id="modal-date"></div>
+        <div class="modal-meta"><span id="modal-badge"></span><span id="modal-date"></span><span id="modal-cat"></span></div>
       </div>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
-    <div class="modal-section">
+    <div class="modal-section" id="ms-summary">
       <div class="modal-section-label">Sommario</div>
       <div class="modal-text" id="modal-summary"></div>
     </div>
-    <div class="modal-section" id="modal-kp-section">
-      <div class="modal-section-label">Punti Chiave</div>
-      <div id="modal-keypoints"></div>
+    <div class="modal-section" id="ms-kp">
+      <div class="modal-section-label">Punti chiave</div>
+      <div id="modal-kp"></div>
     </div>
     <div class="modal-section">
-      <div class="modal-section-label">Tag & Categoria</div>
+      <div class="modal-section-label">Tag</div>
       <div id="modal-tags"></div>
     </div>
-    <div class="modal-section" id="modal-raw-section">
-      <div class="modal-section-label">Testo Originale</div>
+    <div class="modal-section" id="ms-raw">
+      <div class="modal-section-label">Testo originale</div>
       <div class="raw-text" id="modal-raw"></div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger" onclick="deleteConversation()">ELIMINA</button>
-      <button class="btn btn-ghost" onclick="closeModal()">CHIUDI</button>
+      <button class="btn btn-danger" onclick="deleteConv()">Elimina</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Chiudi</button>
     </div>
   </div>
 </div>
 
-<!-- NOTIFICATION -->
 <div id="notification"></div>
 
 <script>
-const SUPABASE_URL = "https://gbznofvbibfpamtegirb.supabase.co";
-const SUPABASE_KEY = "sb_publishable_Ta3MSLDcxMQNFJmmr52a7w_Ziwq_IjG";
+const URL_ = "https://gbznofvbibfpamtegirb.supabase.co";
+const KEY_ = "sb_publishable_Ta3MSLDcxMQNFJmmr52a7w_Ziwq_IjG";
+const HDR  = { apikey: KEY_, Authorization: `Bearer ${KEY_}` };
 
-const AI_COLORS = { Claude:"#F59E0B", ChatGPT:"#10B981", Gemini:"#3B82F6", Copilot:"#8B5CF6", Altro:"#6B7280", Unknown:"#6B7280", Sconosciuto:"#6B7280" };
-const AI_ICONS  = { Claude:"◆", ChatGPT:"⬡", Gemini:"✦", Copilot:"⬟", Altro:"○", Unknown:"○", Sconosciuto:"○" };
+const AI_C = {
+  Claude:  { bg:"#FEF3C7", bd:"#FDE68A", tx:"#92400E" },
+  ChatGPT: { bg:"#D1FAE5", bd:"#A7F3D0", tx:"#065F46" },
+  Gemini:  { bg:"#DBEAFE", bd:"#BFDBFE", tx:"#1E40AF" },
+  Copilot: { bg:"#EDE9FE", bd:"#DDD6FE", tx:"#5B21B6" },
+  Altro:   { bg:"#F3F4F6", bd:"#E5E7EB", tx:"#374151" },
+};
 
-let allConversations = [];
-let currentId = null;
+const THEMES = [
+  { name:"Blu classico",   a:"#2563EB", l:"#EFF6FF" },
+  { name:"Verde salvia",   a:"#16A34A", l:"#F0FDF4" },
+  { name:"Terracotta",     a:"#C2410C", l:"#FFF7ED" },
+  { name:"Viola",          a:"#7C3AED", l:"#F5F3FF" },
+  { name:"Teal",           a:"#0D9488", l:"#F0FDFA" },
+  { name:"Ardesia",        a:"#475569", l:"#F8FAFC" },
+];
 
-// ─── DB ───────────────────────────────────────────────────────────────────────
-async function dbGet(path) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
-    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-  });
+let convs = [], curId = null;
+
+async function get(path) {
+  const r = await fetch(`${URL_}/rest/v1/${path}`, { headers: HDR });
   return r.json();
 }
-async function dbPost(table, data) {
-  const r = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+async function post(table, data) {
+  const r = await fetch(`${URL_}/rest/v1/${table}`, {
     method: "POST",
-    headers: {
-      "Content-Type":"application/json",
-      apikey: SUPABASE_KEY,
-      Authorization: `Bearer ${SUPABASE_KEY}`,
-      Prefer: "return=representation"
-    },
+    headers: { ...HDR, "Content-Type":"application/json", Prefer:"return=representation" },
     body: JSON.stringify(data)
   });
   return r.json();
 }
-async function dbDelete(table, id) {
-  await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
-    method: "DELETE",
-    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` }
-  });
+async function del(table, id) {
+  await fetch(`${URL_}/rest/v1/${table}?id=eq.${id}`, { method:"DELETE", headers: HDR });
 }
 
-// ─── INIT ─────────────────────────────────────────────────────────────────────
 async function init() {
+  loadTheme(); buildColors();
+  const fs = localStorage.getItem("aihub-font"); if (fs) document.body.style.fontSize = fs;
   try {
-    const data = await dbGet("conversations?select=*&order=created_at.desc");
-    if (Array.isArray(data)) {
-      allConversations = data;
-      renderAll();
-    } else {
-      showError("Errore connessione DB. Controlla la chiave Supabase.");
-    }
-  } catch(e) {
-    showError("Errore di rete: " + e.message);
-  }
+    const d = await get("conversations?select=*&order=created_at.desc");
+    if (Array.isArray(d)) { convs = d; renderAll(); }
+    else showErr("Tabella non trovata. Esegui il CREATE TABLE su Supabase SQL Editor.");
+  } catch(e) { showErr("Errore di rete: " + e.message); }
   document.getElementById("loading-screen").classList.remove("show");
 }
 
 function renderAll() {
-  renderStats();
-  renderRecent();
-  renderCategories();
-  renderLibrary(allConversations);
-  populateFilters();
-  document.getElementById("nav-count").textContent = allConversations.length;
-}
+  document.getElementById("stat-total").textContent   = convs.length;
+  document.getElementById("stat-claude").textContent  = convs.filter(c=>c.ai_source==="Claude").length;
+  document.getElementById("stat-chatgpt").textContent = convs.filter(c=>c.ai_source==="ChatGPT").length;
+  document.getElementById("stat-other").textContent   = convs.filter(c=>!["Claude","ChatGPT"].includes(c.ai_source)).length;
+  document.getElementById("nav-count").textContent    = convs.length;
+  document.getElementById("settings-count").textContent = convs.length;
 
-// ─── STATS ────────────────────────────────────────────────────────────────────
-function renderStats() {
-  document.getElementById("stat-total").textContent = allConversations.length;
-  document.getElementById("stat-claude").textContent  = allConversations.filter(c=>c.ai_source==="Claude").length;
-  document.getElementById("stat-chatgpt").textContent = allConversations.filter(c=>c.ai_source==="ChatGPT").length;
-  document.getElementById("stat-gemini").textContent  = allConversations.filter(c=>c.ai_source==="Gemini").length;
-}
+  const rl = document.getElementById("recent-list");
+  rl.innerHTML = convs.length ? convs.slice(0,5).map(cardHTML).join("") : emptyHTML("◆","Nessuna conversazione ancora.<br>Importa la tua prima chat.","import");
 
-// ─── RECENT ───────────────────────────────────────────────────────────────────
-function renderRecent() {
-  const el = document.getElementById("recent-list");
-  if (!allConversations.length) {
-    el.innerHTML = `<div class="empty">
-      <div class="empty-icon">◆</div>
-      <div class="empty-text">Nessuna conversazione ancora.<br>Inizia importando la tua prima chat.</div>
-      <button class="btn btn-primary" style="margin-top:20px" onclick="showView('import')">IMPORTA ORA</button>
-    </div>`;
-    return;
-  }
-  el.innerHTML = allConversations.slice(0,6).map(c => convCardHTML(c)).join("");
-}
-
-// ─── CATEGORIES ───────────────────────────────────────────────────────────────
-function renderCategories() {
   const cats = {};
-  allConversations.forEach(c => { if(c.category) cats[c.category] = (cats[c.category]||0)+1; });
-  const grid = document.getElementById("cat-grid");
-  const card = document.getElementById("cat-card");
-  if (!Object.keys(cats).length) { card.style.display="none"; return; }
-  card.style.display="block";
-  grid.innerHTML = Object.entries(cats).map(([cat,n]) => `
-    <div class="cat-chip" onclick="filterByCategory('${cat}')">
-      <div class="cat-chip-num">${n}</div>
-      <div class="cat-chip-label">${cat}</div>
-    </div>
-  `).join("");
+  convs.forEach(c=>{ if(c.category) cats[c.category]=(cats[c.category]||0)+1; });
+  const cc = document.getElementById("cat-card");
+  if (Object.keys(cats).length) {
+    cc.style.display = "block";
+    document.getElementById("cat-grid").innerHTML = Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,n])=>
+      `<div class="cat-chip" onclick="filterCat('${esc(cat)}')"><div class="cat-chip-num">${n}</div><div class="cat-chip-label">${esc(cat)}</div></div>`
+    ).join("");
+  } else cc.style.display = "none";
+
+  renderLib(convs);
+  const ais  = [...new Set(convs.map(c=>c.ai_source).filter(Boolean))];
+  const catz = [...new Set(convs.map(c=>c.category).filter(Boolean))];
+  document.getElementById("filter-ai").innerHTML  = `<option value="all">Tutte le AI</option>` + ais.map(a=>`<option>${a}</option>`).join("");
+  document.getElementById("filter-cat").innerHTML = `<option value="all">Tutte le categorie</option>` + catz.map(c=>`<option>${c}</option>`).join("");
 }
 
-// ─── LIBRARY ──────────────────────────────────────────────────────────────────
-function renderLibrary(list) {
-  const el = document.getElementById("library-list");
+function renderLib(list) {
   document.getElementById("library-count").textContent = list.length + " conversazioni";
-  if (!list.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">≡</div><div class="empty-text">Nessuna conversazione trovata.</div></div>`;
-    return;
-  }
-  el.innerHTML = list.map(c => convCardHTML(c)).join("");
+  document.getElementById("library-list").innerHTML = list.length ? list.map(cardHTML).join("") : emptyHTML("≡","Nessuna conversazione trovata.");
 }
 
-function convCardHTML(c) {
-  const color = AI_COLORS[c.ai_source] || "#6B7280";
-  const icon  = AI_ICONS[c.ai_source]  || "○";
-  const date  = new Date(c.created_at).toLocaleDateString("it-IT");
-  const tagsHTML = [
-    tagHTML(c.ai_source, color),
-    tagHTML(c.category, "#4A4A68"),
-    ...(c.tags||"").split(",").slice(0,3).map(t=>t.trim()).filter(Boolean).map(t=>tagHTML(t,"#333350"))
-  ].join("");
+function cardHTML(c) {
+  const ai = AI_C[c.ai_source] || AI_C["Altro"];
+  const dt = new Date(c.created_at).toLocaleDateString("it-IT",{day:"2-digit",month:"short",year:"numeric"});
+  const tgs = (c.tags||"").split(",").slice(0,4).map(t=>t.trim()).filter(Boolean)
+    .map(t=>`<span class="tag" style="background:var(--bg3);border-color:var(--border2);color:var(--text2)">${esc(t)}</span>`).join("");
   return `<div class="conv-card" onclick="openModal('${c.id}')">
     <div class="conv-header">
-      <span class="conv-icon" style="color:${color}">${icon}</span>
+      <span class="conv-ai-badge" style="background:${ai.bg};border-color:${ai.bd};color:${ai.tx}">${esc(c.ai_source||"Altro")}</span>
       <span class="conv-title">${esc(c.title)}</span>
-      <span class="conv-date">${date}</span>
+      <span class="conv-date">${dt}</span>
     </div>
-    <div class="conv-summary">${esc(c.summary||"")}</div>
-    <div class="tags">${tagsHTML}</div>
+    ${c.summary?`<div class="conv-summary">${esc(c.summary)}</div>`:""}
+    <div class="tags">
+      ${c.category?`<span class="tag" style="background:var(--accent-soft);border-color:#BFDBFE;color:var(--accent)">${esc(c.category)}</span>`:""}
+      ${tgs}
+    </div>
   </div>`;
 }
 
-function tagHTML(text, color) {
-  if (!text) return "";
-  return `<span class="tag" style="background:${color}18;border:1px solid ${color}40;color:${color}">${esc(text)}</span>`;
-}
-
-// ─── FILTERS ──────────────────────────────────────────────────────────────────
-function populateFilters() {
-  const ais  = [...new Set(allConversations.map(c=>c.ai_source).filter(Boolean))];
-  const cats = [...new Set(allConversations.map(c=>c.category).filter(Boolean))];
-  const aiSel  = document.getElementById("filter-ai");
-  const catSel = document.getElementById("filter-cat");
-  aiSel.innerHTML  = `<option value="all">Tutte le AI</option>` + ais.map(a=>`<option>${a}</option>`).join("");
-  catSel.innerHTML = `<option value="all">Tutte le categorie</option>` + cats.map(c=>`<option>${c}</option>`).join("");
+function emptyHTML(icon, text, view) {
+  return `<div class="empty"><div class="empty-icon">${icon}</div><div class="empty-text">${text}</div>
+    ${view?`<button class="btn btn-primary" style="margin-top:16px" onclick="showView('${view}')">Importa ora</button>`:""}
+  </div>`;
 }
 
 function applyFilters() {
   const ai  = document.getElementById("filter-ai").value;
   const cat = document.getElementById("filter-cat").value;
-  const btn = document.getElementById("reset-filters-btn");
-  btn.style.display = (ai!=="all"||cat!=="all") ? "inline-block" : "none";
-  const filtered = allConversations.filter(c =>
-    (ai==="all"||c.ai_source===ai) && (cat==="all"||c.category===cat)
-  );
-  renderLibrary(filtered);
+  document.getElementById("reset-btn").style.display = (ai!=="all"||cat!=="all")?"inline-flex":"none";
+  renderLib(convs.filter(c=>(ai==="all"||c.ai_source===ai)&&(cat==="all"||c.category===cat)));
 }
-
 function resetFilters() {
-  document.getElementById("filter-ai").value  = "all";
-  document.getElementById("filter-cat").value = "all";
-  document.getElementById("reset-filters-btn").style.display = "none";
-  renderLibrary(allConversations);
+  document.getElementById("filter-ai").value="all"; document.getElementById("filter-cat").value="all";
+  document.getElementById("reset-btn").style.display="none"; renderLib(convs);
+}
+function filterCat(cat) { showView("library"); document.getElementById("filter-cat").value=cat; applyFilters(); }
+
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("f-raw").addEventListener("input",function(){
+    document.getElementById("char-count").textContent=this.value.length.toLocaleString("it-IT")+" caratteri";
+  });
+});
+
+function clearForm() {
+  ["f-title","f-category","f-tags","f-summary","f-keypoints","f-raw"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("f-ai").value="Claude";
+  document.getElementById("char-count").textContent="0 caratteri";
 }
 
-function filterByCategory(cat) {
-  showView("library");
-  document.getElementById("filter-cat").value = cat;
-  applyFilters();
-}
-
-// ─── IMPORT ───────────────────────────────────────────────────────────────────
-function updateCharCount() {
-  const len = document.getElementById("import-text").value.length;
-  document.getElementById("char-count").textContent = len.toLocaleString("it-IT") + " caratteri";
-}
-
-function showImportStep(step) {
-  document.querySelectorAll(".import-step").forEach(el => el.classList.remove("active"));
-  document.getElementById("step-"+step).classList.add("active");
-}
-
-async function startAnalysis() {
-  const text = document.getElementById("import-text").value.trim();
-  if (!text) { notify("Incolla prima una conversazione.", "error"); return; }
-  showImportStep("analyzing");
-
-  try {
-    const prompt = `Analizza questa conversazione con un'AI e rispondi SOLO con un oggetto JSON valido, senza markdown, senza backtick, senza testo extra.
-
-Il JSON deve avere esattamente questi campi:
-{
-  "title": "titolo breve e descrittivo (max 8 parole)",
-  "summary": "riassunto chiaro in 2-3 frasi",
-  "ai_source": "nome dell'AI (Claude/ChatGPT/Gemini/Copilot/Altro)",
-  "category": "categoria principale (es: IT & Tech, Programmazione, Medicina, Legale, Business, Creatività, Scienza, Generale)",
-  "tags": "tag1, tag2, tag3, tag4, tag5",
-  "key_points": "punto1 || punto2 || punto3",
-  "conversation_date": "data se trovata nel testo in formato YYYY-MM-DD, altrimenti stringa vuota"
-}
-
-CONVERSAZIONE DA ANALIZZARE:
-${text.substring(0, 4000)}`;
-
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
-      })
-    });
-    const data = await res.json();
-    const raw = data.content?.[0]?.text || "{}";
-    let parsed;
-    try { parsed = JSON.parse(raw.replace(/```json|```/g,"").trim()); }
-    catch { parsed = { title:"Conversazione importata", summary:"Analisi non disponibile.", ai_source:"Altro", category:"Generale", tags:"", key_points:"", conversation_date:"" }; }
-
-    document.getElementById("r-title").value    = parsed.title || "";
-    document.getElementById("r-ai").value       = parsed.ai_source || "Altro";
-    document.getElementById("r-category").value = parsed.category || "Generale";
-    document.getElementById("r-tags").value     = parsed.tags || "";
-    document.getElementById("r-summary").value  = parsed.summary || "";
-    document.getElementById("r-keypoints").value= parsed.key_points || "";
-    showImportStep("review");
-
-  } catch(e) {
-    notify("Errore analisi AI: " + e.message, "error");
-    showImportStep("input");
-  }
-}
-
-function backToInput() { showImportStep("input"); }
-
-async function saveConversation() {
+async function saveConv() {
+  const title = document.getElementById("f-title").value.trim();
+  if (!title) { notify("Il titolo è obbligatorio.","error"); return; }
   const obj = {
-    title:             document.getElementById("r-title").value,
-    ai_source:         document.getElementById("r-ai").value,
-    category:          document.getElementById("r-category").value,
-    tags:              document.getElementById("r-tags").value,
-    summary:           document.getElementById("r-summary").value,
-    key_points:        document.getElementById("r-keypoints").value,
-    raw_text:          document.getElementById("import-text").value,
+    title,
+    ai_source:  document.getElementById("f-ai").value,
+    category:   document.getElementById("f-category").value.trim()||"Generale",
+    tags:       document.getElementById("f-tags").value.trim(),
+    summary:    document.getElementById("f-summary").value.trim(),
+    key_points: document.getElementById("f-keypoints").value.trim(),
+    raw_text:   document.getElementById("f-raw").value.trim(),
     conversation_date: ""
   };
-  if (!obj.title) { notify("Il titolo è obbligatorio.", "error"); return; }
-
   try {
-    const result = await dbPost("conversations", obj);
-    if (Array.isArray(result) && result.length) {
-      allConversations.unshift(result[0]);
-      renderAll();
-      notify("Conversazione salvata!");
-      document.getElementById("import-text").value = "";
-      document.getElementById("char-count").textContent = "0 caratteri";
-      showImportStep("input");
-      showView("dashboard");
-    } else {
-      notify("Errore nel salvataggio.", "error");
-    }
-  } catch(e) {
-    notify("Errore: " + e.message, "error");
-  }
+    const r = await post("conversations", obj);
+    if (Array.isArray(r)&&r.length) {
+      convs.unshift(r[0]); renderAll();
+      notify("Conversazione salvata!"); clearForm(); showView("dashboard");
+    } else notify("Errore nel salvataggio.","error");
+  } catch(e) { notify("Errore: "+e.message,"error"); }
 }
 
-// ─── SEARCH ───────────────────────────────────────────────────────────────────
 async function doSearch() {
-  const q = document.getElementById("search-input").value.trim();
-  if (!q) return;
+  const q = document.getElementById("search-input").value.trim(); if (!q) return;
   const enc = encodeURIComponent(q);
-  const url = `conversations?select=*&or=(title.ilike.*${enc}*,summary.ilike.*${enc}*,tags.ilike.*${enc}*,category.ilike.*${enc}*,raw_text.ilike.*${enc}*)&order=created_at.desc`;
-  const data = await dbGet(url);
-  const results = Array.isArray(data) ? data : [];
-
-  const label = document.getElementById("search-results-label");
-  label.style.display = "block";
-  label.textContent = `${results.length} risultati per "${q}"`;
-
-  document.getElementById("clear-search-btn").style.display = "inline-block";
-  const el = document.getElementById("search-results");
-  if (!results.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-text">Nessun risultato trovato.</div></div>`;
-  } else {
-    el.innerHTML = results.map(c => convCardHTML(c)).join("");
-  }
+  try {
+    const d = await get(`conversations?select=*&or=(title.ilike.*${enc}*,summary.ilike.*${enc}*,tags.ilike.*${enc}*,category.ilike.*${enc}*,raw_text.ilike.*${enc}*)&order=created_at.desc`);
+    const res = Array.isArray(d)?d:[];
+    const lbl = document.getElementById("search-label");
+    lbl.style.display="block";
+    lbl.textContent=`${res.length} RISULTAT${res.length===1?"O":"I"} PER "${q.toUpperCase()}"`;
+    document.getElementById("clear-btn").style.display="inline-flex";
+    document.getElementById("search-results").innerHTML = res.length ? res.map(cardHTML).join("") : emptyHTML("◎","Nessun risultato trovato.");
+  } catch(e) { notify("Errore ricerca: "+e.message,"error"); }
 }
-
 function clearSearch() {
-  document.getElementById("search-input").value = "";
-  document.getElementById("search-results").innerHTML = "";
-  document.getElementById("search-results-label").style.display = "none";
-  document.getElementById("clear-search-btn").style.display = "none";
+  document.getElementById("search-input").value="";
+  document.getElementById("search-results").innerHTML="";
+  document.getElementById("search-label").style.display="none";
+  document.getElementById("clear-btn").style.display="none";
 }
 
-// ─── MODAL ────────────────────────────────────────────────────────────────────
 function openModal(id) {
-  const c = allConversations.find(x => x.id === id);
-  if (!c) return;
-  currentId = id;
-  const color = AI_COLORS[c.ai_source] || "#6B7280";
-  const icon  = AI_ICONS[c.ai_source]  || "○";
-  document.getElementById("modal-icon").textContent = icon;
-  document.getElementById("modal-icon").style.color = color;
+  const c = convs.find(x=>x.id===id); if (!c) return;
+  curId = id;
+  const ai = AI_C[c.ai_source]||AI_C["Altro"];
   document.getElementById("modal-title").textContent = c.title;
   document.getElementById("modal-date").textContent  = new Date(c.created_at).toLocaleDateString("it-IT",{weekday:"long",year:"numeric",month:"long",day:"numeric"});
-  document.getElementById("modal-summary").textContent = c.summary || "—";
+  const b=document.getElementById("modal-badge");
+  b.textContent=c.ai_source||"Altro"; b.className="tag";
+  b.style.cssText=`background:${ai.bg};border-color:${ai.bd};color:${ai.tx}`;
+  document.getElementById("modal-cat").textContent = c.category?"◆ "+c.category:"";
 
-  const kpSection = document.getElementById("modal-kp-section");
-  const kpEl = document.getElementById("modal-keypoints");
-  if (c.key_points) {
-    kpSection.style.display = "block";
-    kpEl.innerHTML = c.key_points.split("||").map(p=>p.trim()).filter(Boolean).map(p =>
-      `<div class="key-point"><span class="key-point-dot">◆</span><span>${esc(p)}</span></div>`
-    ).join("");
-  } else {
-    kpSection.style.display = "none";
-  }
+  const ss=document.getElementById("ms-summary");
+  if(c.summary){ss.style.display="block";document.getElementById("modal-summary").textContent=c.summary;}else ss.style.display="none";
 
-  const tagsEl = document.getElementById("modal-tags");
-  tagsEl.innerHTML = [
-    tagHTML(c.ai_source, color),
-    tagHTML(c.category, "#4A4A68"),
-    ...(c.tags||"").split(",").map(t=>t.trim()).filter(Boolean).map(t=>tagHTML(t,"#333350"))
-  ].join("");
+  const ks=document.getElementById("ms-kp");
+  if(c.key_points){
+    ks.style.display="block";
+    document.getElementById("modal-kp").innerHTML=c.key_points.split("||").map(p=>p.trim()).filter(Boolean)
+      .map(p=>`<div class="key-point"><span class="key-point-dot">◆</span><span>${esc(p)}</span></div>`).join("");
+  } else ks.style.display="none";
 
-  const rawSection = document.getElementById("modal-raw-section");
-  if (c.raw_text) {
-    rawSection.style.display = "block";
-    document.getElementById("modal-raw").textContent = c.raw_text;
-  } else {
-    rawSection.style.display = "none";
-  }
+  const tl=(c.tags||"").split(",").map(t=>t.trim()).filter(Boolean);
+  document.getElementById("modal-tags").innerHTML=tl.length
+    ?tl.map(t=>`<span class="tag" style="background:var(--bg3);border-color:var(--border2);color:var(--text2);margin:2px">${esc(t)}</span>`).join("")
+    :`<span style="color:var(--text3);font-size:11px">Nessun tag</span>`;
+
+  const rs=document.getElementById("ms-raw");
+  if(c.raw_text){rs.style.display="block";document.getElementById("modal-raw").textContent=c.raw_text;}else rs.style.display="none";
 
   document.getElementById("modal-overlay").classList.add("open");
 }
-
-function closeModal() {
-  document.getElementById("modal-overlay").classList.remove("open");
-  currentId = null;
+function closeModal(){document.getElementById("modal-overlay").classList.remove("open");curId=null;}
+async function deleteConv(){
+  if(!curId)return;
+  if(!confirm("Eliminare questa conversazione? L'operazione non è reversibile."))return;
+  await del("conversations",curId);
+  convs=convs.filter(c=>c.id!==curId);
+  renderAll();closeModal();notify("Conversazione eliminata.");
 }
 
-async function deleteConversation() {
-  if (!currentId) return;
-  if (!confirm("Eliminare questa conversazione? L'operazione non è reversibile.")) return;
-  await dbDelete("conversations", currentId);
-  allConversations = allConversations.filter(c => c.id !== currentId);
-  renderAll();
-  closeModal();
-  notify("Conversazione eliminata.");
-}
-
-// ─── NAV ──────────────────────────────────────────────────────────────────────
-function showView(name) {
-  document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
-  document.querySelectorAll(".nav-item").forEach(el => el.classList.remove("active"));
+function showView(name){
+  document.querySelectorAll(".view").forEach(el=>el.classList.remove("active"));
+  document.querySelectorAll(".nav-item").forEach(el=>el.classList.remove("active"));
   document.getElementById("view-"+name).classList.add("active");
-  const items = document.querySelectorAll(".nav-item");
-  const map = { dashboard:0, import:1, search:2, library:3 };
-  if (map[name] !== undefined) items[map[name]].classList.add("active");
-  if (name === "import") showImportStep("input");
+  const map={dashboard:0,import:1,search:2,library:3,settings:4};
+  const items=document.querySelectorAll(".nav-item");
+  if(map[name]!==undefined)items[map[name]].classList.add("active");
 }
 
-// ─── HELPERS ──────────────────────────────────────────────────────────────────
-function esc(str) {
-  return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function buildColors(){
+  const saved=localStorage.getItem("aihub-theme")||"0";
+  document.getElementById("color-grid").innerHTML=THEMES.map((t,i)=>`
+    <div class="color-option ${i==saved?"selected":""}" onclick="applyTheme(${i})">
+      <div class="color-swatch" style="background:${t.a}"></div>
+      <div class="color-name">${t.name}</div>
+    </div>`).join("");
 }
-
-function notify(msg, type="success") {
-  const el = document.getElementById("notification");
-  el.textContent = (type==="success" ? "✓ " : "✗ ") + msg;
-  el.className = type;
-  el.style.display = "block";
-  setTimeout(() => { el.style.display = "none"; }, 3500);
+function applyTheme(i){
+  const t=THEMES[i];
+  document.documentElement.style.setProperty("--accent",t.a);
+  document.documentElement.style.setProperty("--accent2",t.a);
+  document.documentElement.style.setProperty("--accent-soft",t.l);
+  localStorage.setItem("aihub-theme",i);
+  buildColors();
 }
+function loadTheme(){const i=localStorage.getItem("aihub-theme");if(i!==null)applyTheme(parseInt(i));}
+function setFont(sz){document.body.style.fontSize=sz;localStorage.setItem("aihub-font",sz);}
 
-function showError(msg) {
-  document.getElementById("main").innerHTML = `
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function notify(msg,type="success"){
+  const el=document.getElementById("notification");
+  el.textContent=(type==="success"?"✓  ":"✗  ")+msg;el.className=type;el.style.display="block";
+  setTimeout(()=>el.style.display="none",3500);
+}
+function showErr(msg){
+  document.getElementById("main").innerHTML=`
     <div style="display:flex;align-items:center;justify-content:center;min-height:80vh">
-      <div class="card" style="max-width:480px;text-align:center">
-        <div style="font-size:36px;margin-bottom:14px">⚠</div>
-        <div style="font-family:'Syne',sans-serif;font-size:18px;color:var(--accent);margin-bottom:12px">ERRORE</div>
-        <div style="font-size:13px;color:var(--text2);line-height:1.7">${msg}</div>
+      <div class="card" style="max-width:480px;text-align:center;padding:40px">
+        <div style="font-family:'Syne',sans-serif;font-size:40px;color:var(--accent);margin-bottom:16px">◆</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;color:var(--text);margin-bottom:12px">Errore di connessione</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.8;margin-bottom:24px">${msg}</div>
+        <button class="btn btn-primary" onclick="location.reload()">↺ Riprova</button>
       </div>
     </div>`;
 }
 
-// ─── START ────────────────────────────────────────────────────────────────────
 window.addEventListener("DOMContentLoaded", init);
 </script>
 </body>
