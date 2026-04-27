@@ -47,10 +47,10 @@
   .btn:disabled{opacity:0.5;cursor:not-allowed;}
   .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:22px;box-shadow:var(--shadow);}
   .card-label{font-size:10px;letter-spacing:0.15em;color:var(--text3);margin-bottom:16px;text-transform:uppercase;}
-  .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
-  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;box-shadow:var(--shadow);border-top:3px solid var(--accent);}
-  .stat-number{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--accent);line-height:1;}
-  .stat-label{font-size:10px;color:var(--text3);letter-spacing:0.1em;margin-top:6px;text-transform:uppercase;}
+  .stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px;}
+  .stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:20px 14px;box-shadow:var(--shadow);border-top:3px solid var(--accent);text-align:center;}
+  .stat-number{font-family:'Syne',sans-serif;font-size:42px;font-weight:800;color:var(--accent);line-height:1;letter-spacing:-0.02em;}
+  .stat-label{font-size:10px;color:var(--text3);letter-spacing:0.12em;margin-top:8px;text-transform:uppercase;}
   .conv-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px 18px;cursor:pointer;transition:all 0.15s;margin-bottom:9px;box-shadow:var(--shadow);}
   .conv-card:hover{border-color:var(--accent);box-shadow:var(--shadow-md);transform:translateY(-1px);}
   .conv-header{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
@@ -234,10 +234,30 @@
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-number" id="stat-total">0</div><div class="stat-label">Conversazioni</div></div>
-      <div class="stat-card" style="border-top-color:#F59E0B"><div class="stat-number" style="color:#D97706" id="stat-claude">0</div><div class="stat-label">Claude</div></div>
-      <div class="stat-card" style="border-top-color:#10B981"><div class="stat-number" style="color:#059669" id="stat-chatgpt">0</div><div class="stat-label">ChatGPT</div></div>
-      <div class="stat-card" style="border-top-color:#8B5CF6"><div class="stat-number" style="color:#7C3AED" id="stat-other">0</div><div class="stat-label">Gemini / Altro</div></div>
+      <div class="stat-card">
+        <div class="stat-number" id="stat-total">0</div>
+        <div class="stat-label">Totale</div>
+      </div>
+      <div class="stat-card" style="border-top-color:#F59E0B">
+        <div class="stat-number" style="color:#D97706" id="stat-claude">0</div>
+        <div class="stat-label">Claude</div>
+      </div>
+      <div class="stat-card" style="border-top-color:#10B981">
+        <div class="stat-number" style="color:#059669" id="stat-chatgpt">0</div>
+        <div class="stat-label">ChatGPT</div>
+      </div>
+      <div class="stat-card" style="border-top-color:#3B82F6">
+        <div class="stat-number" style="color:#2563EB" id="stat-gemini">0</div>
+        <div class="stat-label">Gemini</div>
+      </div>
+      <div class="stat-card" style="border-top-color:#8B5CF6">
+        <div class="stat-number" style="color:#7C3AED" id="stat-copilot">0</div>
+        <div class="stat-label">Copilot</div>
+      </div>
+      <div class="stat-card" style="border-top-color:#9CA3AF">
+        <div class="stat-number" style="color:#6B7280" id="stat-other">0</div>
+        <div class="stat-label">Altro</div>
+      </div>
     </div>
     <div class="card" style="margin-bottom:18px">
       <div class="card-label">Recenti</div>
@@ -520,7 +540,9 @@ function renderAll(){
   document.getElementById("stat-total").textContent=convs.length;
   document.getElementById("stat-claude").textContent=convs.filter(c=>c.ai_source==="Claude").length;
   document.getElementById("stat-chatgpt").textContent=convs.filter(c=>c.ai_source==="ChatGPT").length;
-  document.getElementById("stat-other").textContent=convs.filter(c=>!["Claude","ChatGPT"].includes(c.ai_source)).length;
+  document.getElementById("stat-gemini").textContent=convs.filter(c=>c.ai_source==="Gemini").length;
+  document.getElementById("stat-copilot").textContent=convs.filter(c=>c.ai_source==="Copilot").length;
+  document.getElementById("stat-other").textContent=convs.filter(c=>!["Claude","ChatGPT","Gemini","Copilot"].includes(c.ai_source)).length;
   document.getElementById("nav-count").textContent=convs.length;
   document.getElementById("settings-count").textContent=convs.length;
   document.getElementById("recent-list").innerHTML=convs.length?convs.slice(0,5).map(cardHTML).join(""):emptyHTML("◆","Nessuna conversazione ancora.<br>Importa la tua prima chat.","import");
@@ -951,7 +973,7 @@ function toggleEdit() {
 }
 
 async function saveEdit() {
-  const c = convs.find(x => x.id === curId); if (!c) return;
+  const idx = convs.findIndex(x => x.id === curId); if (idx === -1) return;
   const updates = {
     title:      document.getElementById("edit-title").value.trim(),
     ai_source:  document.getElementById("edit-ai").value,
@@ -963,9 +985,13 @@ async function saveEdit() {
   if (!updates.title) { notify("Il titolo è obbligatorio.", "error"); return; }
   const status = await dbPatch("conversations", curId, updates);
   if (status >= 200 && status < 300) {
-    Object.assign(c, updates);
+    // Update array in place before any render
+    convs[idx] = { ...convs[idx], ...updates };
+    // Close edit panel
+    document.getElementById("detail-edit-panel").style.display = "none";
+    // Re-render stats and library
     renderAll();
-    // Refresh detail view
+    // Refresh detail view with updated data
     openDetail(curId);
     notify("Modifiche salvate.");
   } else {
