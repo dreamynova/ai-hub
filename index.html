@@ -212,7 +212,7 @@
     <div class="nav-item" onclick="showView('library')"><span class="nav-icon">≡</span> Libreria <span class="nav-badge" id="nav-count">0</span></div>
     <div class="nav-item" onclick="showView('settings')"><span class="nav-icon">⚙</span> Impostazioni</div>
   </nav>
-  <div class="sidebar-footer"><span class="dot"></span>Supabase connesso<br><span style="font-size:9px;opacity:0.6;margin-top:3px;display:block">gbznofvb...</span><span style="font-size:9px;opacity:0.4;margin-top:6px;display:block;letter-spacing:0.08em">v1.4 — 27 apr 2026</span></div>
+  <div class="sidebar-footer"><span class="dot"></span>Supabase connesso<br><span style="font-size:9px;opacity:0.6;margin-top:3px;display:block">gbznofvb...</span><span style="font-size:9px;opacity:0.4;margin-top:6px;display:block;letter-spacing:0.08em">v1.5 — 27 apr 2026</span></div>
 </div>
 
 <div id="main">
@@ -851,14 +851,29 @@ async function renderConversation(text, aiSource, convId) {
   // ── Formato estensione: blocchi prefissati con U: o A: ──────────────────────
   if (/^(U|A):/.test(raw.trim())) {
     const blocks = raw.split(/\n{2,}/).map(b => b.trim()).filter(b => b.length > 0);
-    const classifications = {};
-    const cleanBlocks = blocks.map((b, i) => {
-      if (b.startsWith("U:")) { classifications[i] = "U"; return b.slice(2).trim(); }
-      if (b.startsWith("A:")) { classifications[i] = "A"; return b.slice(2).trim(); }
-      classifications[i] = i % 2 === 0 ? "U" : "A"; return b;
+
+    // Strip U:/A: markers to get clean text blocks
+    const cleanBlocks = blocks.map(b => {
+      if (b.startsWith("U:") || b.startsWith("A:")) return b.slice(2).trim();
+      return b;
     });
+
+    // Check cache first — user corrections take priority
+    const cached = localStorage.getItem(cacheKey);
+    let classifications = {};
+    if (cached) {
+      try { classifications = JSON.parse(cached); } catch {}
+    } else {
+      // First time: build from markers
+      blocks.forEach((b, i) => {
+        if (b.startsWith("U:")) classifications[i] = "U";
+        else if (b.startsWith("A:")) classifications[i] = "A";
+        else classifications[i] = i % 2 === 0 ? "U" : "A";
+      });
+      localStorage.setItem(cacheKey, JSON.stringify(classifications));
+    }
+
     buildBubbles(el, cleanBlocks, classifications, cacheKey);
-    localStorage.setItem(cacheKey, JSON.stringify(classifications));
     return;
   }
 
