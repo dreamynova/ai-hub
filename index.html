@@ -403,7 +403,31 @@
         <div class="detail-title" id="detail-title" style="margin-top:14px"></div>
         <div id="detail-meta" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
       </div>
-      <button class="btn btn-danger" onclick="deleteConv()">Elimina</button>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-ghost" onclick="toggleEdit()">✎ Modifica</button>
+        <button class="btn btn-danger" onclick="deleteConv()">Elimina</button>
+      </div>
+    </div>
+
+    <!-- Edit panel (hidden by default) -->
+    <div id="detail-edit-panel" style="display:none;margin-bottom:24px">
+      <div class="card">
+        <div class="card-label">Modifica conversazione</div>
+        <div class="form-grid" style="margin-bottom:4px">
+          <div class="form-group"><label class="form-label">Titolo</label><input type="text" id="edit-title"></div>
+          <div class="form-group"><label class="form-label">AI utilizzata</label>
+            <select id="edit-ai"><option>Claude</option><option>ChatGPT</option><option>Gemini</option><option>Copilot</option><option>Altro</option></select>
+          </div>
+          <div class="form-group"><label class="form-label">Categoria</label><input type="text" id="edit-category"></div>
+          <div class="form-group"><label class="form-label">Tag</label><input type="text" id="edit-tags"><div class="form-hint">Separati da virgola</div></div>
+        </div>
+        <div class="form-group"><label class="form-label">Sommario</label><textarea id="edit-summary" style="min-height:70px"></textarea></div>
+        <div class="form-group"><label class="form-label">Punti chiave</label><textarea id="edit-keypoints" style="min-height:60px"></textarea><div class="form-hint">Separati da ||</div></div>
+        <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:6px">
+          <button class="btn btn-ghost" onclick="toggleEdit()">Annulla</button>
+          <button class="btn btn-primary" onclick="saveEdit()">✓ Salva modifiche</button>
+        </div>
+      </div>
     </div>
 
     <div class="detail-section" id="detail-summary-section">
@@ -909,6 +933,44 @@ function flipBlock(index, cacheKey) {
     const c = convs.find(x => x.id === curId);
     if (c) renderConversation(c.raw_text, c.ai_source, c.id);
   } catch(e) {}
+}
+
+function toggleEdit() {
+  const panel = document.getElementById("detail-edit-panel");
+  const open = panel.style.display === "none";
+  if (open) {
+    const c = convs.find(x => x.id === curId); if (!c) return;
+    document.getElementById("edit-title").value     = c.title || "";
+    document.getElementById("edit-ai").value        = c.ai_source || "Altro";
+    document.getElementById("edit-category").value  = c.category || "";
+    document.getElementById("edit-tags").value      = c.tags || "";
+    document.getElementById("edit-summary").value   = c.summary || "";
+    document.getElementById("edit-keypoints").value = c.key_points || "";
+  }
+  panel.style.display = open ? "block" : "none";
+}
+
+async function saveEdit() {
+  const c = convs.find(x => x.id === curId); if (!c) return;
+  const updates = {
+    title:      document.getElementById("edit-title").value.trim(),
+    ai_source:  document.getElementById("edit-ai").value,
+    category:   document.getElementById("edit-category").value.trim(),
+    tags:       document.getElementById("edit-tags").value.trim(),
+    summary:    document.getElementById("edit-summary").value.trim(),
+    key_points: document.getElementById("edit-keypoints").value.trim(),
+  };
+  if (!updates.title) { notify("Il titolo è obbligatorio.", "error"); return; }
+  const status = await dbPatch("conversations", curId, updates);
+  if (status >= 200 && status < 300) {
+    Object.assign(c, updates);
+    renderAll();
+    // Refresh detail view
+    openDetail(curId);
+    notify("Modifiche salvate.");
+  } else {
+    notify("Errore nel salvataggio.", "error");
+  }
 }
 
 function goBack(){showView(prevView);}
