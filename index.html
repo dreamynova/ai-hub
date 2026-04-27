@@ -959,20 +959,33 @@ function showErr(msg){
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("import") === "1") {
-    const text  = params.get("text")  || "";
-    const ai    = params.get("ai")    || "Altro";
-    const title = params.get("title") || "";
-    setTimeout(() => {
-      showView("import"); showStep("input");
-      document.getElementById("f-raw").value = text;
-      document.getElementById("char-count").textContent = text.length.toLocaleString("it-IT") + " caratteri";
-      window.history.replaceState({}, "", window.location.pathname);
-      if (text.trim()) analyzeText();
-    }, 800);
-  }
   init();
+
+  // Handle import from extension via localStorage bridge
+  function handleExtImport() {
+    const raw = localStorage.getItem("aihub_ext_import");
+    if (!raw) return;
+    try {
+      const payload = JSON.parse(raw);
+      localStorage.removeItem("aihub_ext_import");
+      window.history.replaceState({}, "", window.location.pathname);
+      setTimeout(() => {
+        showView("import"); showStep("input");
+        document.getElementById("f-raw").value = payload.text || "";
+        document.getElementById("char-count").textContent = (payload.text||"").length.toLocaleString("it-IT") + " caratteri";
+        if ((payload.text||"").trim()) analyzeText();
+      }, 800);
+    } catch(e) {}
+  }
+
+  // Try immediately (bridge may have already run)
+  if (window.location.search.includes("import=ext")) {
+    handleExtImport();
+    // Also listen for the event in case bridge runs slightly later
+    window.addEventListener("aihub_ext_ready", handleExtImport, { once: true });
+    // Fallback after 1s
+    setTimeout(handleExtImport, 1000);
+  }
 });
 </script>
 </body>
